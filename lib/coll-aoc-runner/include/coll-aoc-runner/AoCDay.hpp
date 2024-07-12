@@ -10,12 +10,12 @@ public:
   AoCDay();
   ~AoCDay();
 
-  std::string part1(const std::string& input, bool example = false);
-  std::string part2(const std::string& input, bool example = false);
+  virtual std::string part1(const std::string& input, bool example = false);
+  virtual std::string part2(const std::string& input, bool example = false);
 
   std::string getExampleInput() const { return exampleInput; }
 
-private:
+protected:
   std::string exampleInput;
 };
 

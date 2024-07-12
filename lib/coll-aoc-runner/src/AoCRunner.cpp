@@ -5,12 +5,12 @@
 #include <getopt.h>
 #include <stdexcept>
 
-AoCRunner::AoCRunner(): error(0), printHelpFlag(false), printVersionFlag(false), runExamples(true) {
-  AoCYear year2015;
-  year2015[1] = AoCDay();
-  years[2015] = year2015;
-}
+AoCRunner::AoCRunner(): error(0), printHelpFlag(false), printVersionFlag(false), runExamples(true) { }
 AoCRunner::~AoCRunner() = default;
+
+void AoCRunner::addYear(int year, const AoCYear &aocYear) {
+  years[year] = aocYear;
+}
 
 int AoCRunner::run(int argc, char *argv[]) {
   parseArgs(argc, argv);
@@ -27,12 +27,12 @@ int AoCRunner::run(int argc, char *argv[]) {
 
       std::string input;
       if (selector.part != 2) {
-        if (runExamples) runPart(year, day, 1, aocDay.part1(aocDay.getExampleInput(), true), true);
-        runPart(year, day, 1, aocDay.part1(input));
+        if (runExamples) runPart(year, day, 1, aocDay->part1(aocDay->getExampleInput(), true), true);
+        runPart(year, day, 1, aocDay->part1(input));
       }
       if (selector.part != 1) {
-        if (runExamples) runPart(year, day, 2, aocDay.part2(aocDay.getExampleInput(), true), true);
-        runPart(year, day, 2, aocDay.part2(input));
+        if (runExamples) runPart(year, day, 2, aocDay->part2(aocDay->getExampleInput(), true), true);
+        runPart(year, day, 2, aocDay->part2(input));
       }
     }
   }

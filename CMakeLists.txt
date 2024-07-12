@@ -12,15 +12,19 @@ set(LIBRARY_DIR "lib/")
 set(SOURCE "${SOURCE_DIR}main.cpp")
 
 # Set headers
+set(HEADER "${INCLUDE_DIR}AoCYears.hpp")
 
 # Set libraries
 set(LIBRARIES "coll-aoc-runner")
-foreach(LIBRARY ${LIBRARIES})
-  add_subdirectory("${LIBRARY_DIR}${LIBRARY}")
+foreach(library ${LIBRARIES})
+  add_subdirectory("${LIBRARY_DIR}${library}")
 endforeach()
 
 project(${PROJECT_NAME})
-add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER})
+add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER}
+  ${SOURCE_2015} ${HEADER_2015}
+)
+
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${LIBRARIES})
 

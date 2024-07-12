@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 
 #include "AoCDay.hpp"
@@ -12,14 +13,14 @@ public:
   AoCYear();
   ~AoCYear();
 
-  std::unordered_map<int, AoCDay> getDays() const { return days; }
-  AoCDay getDay(int day) const { return days.at(day); }
+  std::unordered_map<int, std::shared_ptr<AoCDay>> getDays() const { return days; }
+  std::shared_ptr<AoCDay> getDay(int day) const { return days.at(day); }
 
-  void setDay(int day, AoCDay dayObj) { days[day] = dayObj; }
+  void setDay(int day, std::shared_ptr<AoCDay> aocDay) { days[day] = aocDay; }
 
-  AoCDay& operator[](int day) { return days[day]; }
+  std::shared_ptr<AoCDay>& operator[](int day) { return days[day]; }
 private:
-  std::unordered_map<int, AoCDay> days {};
+  std::unordered_map<int, std::shared_ptr<AoCDay>> days {};
 };
 
 #endif

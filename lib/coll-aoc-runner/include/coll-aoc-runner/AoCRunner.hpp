@@ -14,6 +14,8 @@ public:
   AoCRunner();
   ~AoCRunner();
 
+  void addYear(int year, const AoCYear &aocYear);
+
   int run(int argc, char *argv[]);
 
 private:
