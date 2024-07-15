@@ -1,10 +1,10 @@
 #ifndef COLL_AOC_RUNNER_AOC_RUNNER_HPP
 #define COLL_AOC_RUNNER_AOC_RUNNER_HPP
 
-#include <string>
 #pragma once
 
-#include <unordered_map>
+#include <map>
+#include <string>
 
 #include "AoCSelector.hpp"
 #include "AoCYear.hpp"
@@ -19,7 +19,7 @@ public:
   int run(int argc, char *argv[]);
 
 private:
-  std::unordered_map<int, AoCYear> years;
+  std::map<int, AoCYear> years;
   AoCSelector selector;
 
   int error;
