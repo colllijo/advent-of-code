@@ -65,6 +65,9 @@ sed -zi \
   -e "s/\(\n\n# Set libraries\)/\nset(HEADER_$YEAR\n  \${INCLUDE_DIR}$YEAR\/AoCYear$YEAR.hpp\n  \${INCLUDE_DIR}$YEAR\/Day01.hpp\n  \${INCLUDE_DIR}$YEAR\/Day02.hpp\n  \${INCLUDE_DIR}$YEAR\/Day03.hpp\n  \${INCLUDE_DIR}$YEAR\/Day04.hpp\n  \${INCLUDE_DIR}$YEAR\/Day05.hpp\n  \${INCLUDE_DIR}$YEAR\/Day06.hpp\n  \${INCLUDE_DIR}$YEAR\/Day07.hpp\n  \${INCLUDE_DIR}$YEAR\/Day08.hpp\n  \${INCLUDE_DIR}$YEAR\/Day09.hpp\n  \${INCLUDE_DIR}$YEAR\/Day10.hpp\n  \${INCLUDE_DIR}$YEAR\/Day11.hpp\n  \${INCLUDE_DIR}$YEAR\/Day12.hpp\n  \${INCLUDE_DIR}$YEAR\/Day13.hpp\n  \${INCLUDE_DIR}$YEAR\/Day14.hpp\n  \${INCLUDE_DIR}$YEAR\/Day15.hpp\n  \${INCLUDE_DIR}$YEAR\/Day16.hpp\n  \${INCLUDE_DIR}$YEAR\/Day17.hpp\n  \${INCLUDE_DIR}$YEAR\/Day18.hpp\n  \${INCLUDE_DIR}$YEAR\/Day19.hpp\n  \${INCLUDE_DIR}$YEAR\/Day20.hpp\n  \${INCLUDE_DIR}$YEAR\/Day21.hpp\n  \${INCLUDE_DIR}$YEAR\/Day22.hpp\n  \${INCLUDE_DIR}$YEAR\/Day23.hpp\n  \${INCLUDE_DIR}$YEAR\/Day24.hpp\n  \${INCLUDE_DIR}$YEAR\/Day25.hpp\n)\1/g" \
   "$SCRIPT_PATH/../CMakeLists.txt"
 
+# Prebuild the year to save time when solving the puzzles
+bash "$SCRIPT_PATH/build.sh"
+
 echo "Year $YEAR created."
 
 exit 0

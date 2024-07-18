@@ -11,6 +11,7 @@ set(INCLUDE_DIR "include/")
 set(SOURCE
   "${SOURCE_DIR}AoCRunner.cpp"
   "${SOURCE_DIR}AoCYear.cpp"
+  "${SOURCE_DIR}AoCInput.cpp"
   "${SOURCE_DIR}AoCDay.cpp"
 )
 
@@ -19,6 +20,7 @@ set(HEADER
   "${INCLUDE_DIR}${LIBRARY_NAME}/AoCRunner.hpp"
   "${INCLUDE_DIR}${LIBRARY_NAME}/AoCYear.hpp"
   "${INCLUDE_DIR}${LIBRARY_NAME}/AoCDay.hpp"
+  "${INCLUDE_DIR}${LIBRARY_NAME}/AoCInput.hpp"
   "${INCLUDE_DIR}${LIBRARY_NAME}/AoCSelector.hpp"
 )
 
@@ -38,3 +40,4 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIR}>
     $<INSTALL_INTERFACE:${INCLUDE_DIR}>
 )
+target_link_libraries(${LIBRARY_NAME} PRIVATE curlpp::curlpp)

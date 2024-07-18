@@ -1,11 +1,12 @@
 #include "AoCRunner.hpp"
+#include "AoCDay.hpp"
 
 #include <cstdlib>
 #include <cwchar>
 #include <getopt.h>
-#include <stdexcept>
+#include <string>
 
-AoCRunner::AoCRunner(): error(0), printHelpFlag(false), printVersionFlag(false), runExamples(true) { }
+AoCRunner::AoCRunner(): runExamples(true) { }
 AoCRunner::~AoCRunner() = default;
 
 void AoCRunner::addYear(int year, const AoCYear &aocYear) {
@@ -15,10 +16,6 @@ void AoCRunner::addYear(int year, const AoCYear &aocYear) {
 int AoCRunner::run(int argc, char *argv[]) {
   parseArgs(argc, argv);
 
-  if (error) return error;
-  if (printHelpFlag) return printHelp();
-  if (printVersionFlag) return printVersion();
-
   for (const auto& [year, aocYear] : years) {
     if (selector.year != -1 && selector.year != year) continue;
 
@@ -27,12 +24,12 @@ int AoCRunner::run(int argc, char *argv[]) {
 
       std::string input;
       if (selector.part != 2) {
-        if (runExamples) runPart(year, day, 1, aocDay->part1(aocDay->getExampleInput(), true), true);
-        runPart(year, day, 1, aocDay->part1(input));
+        if (runExamples) runPart(aocDay, year, day, 1, true);
+        runPart(aocDay, year, day, 1);
       }
       if (selector.part != 1) {
-        if (runExamples) runPart(year, day, 2, aocDay->part2(aocDay->getExampleInput(), true), true);
-        runPart(year, day, 2, aocDay->part2(input));
+        if (runExamples) runPart(aocDay, year, day, 2, true);
+        runPart(aocDay, year, day, 2);
       }
     }
   }
@@ -40,7 +37,10 @@ int AoCRunner::run(int argc, char *argv[]) {
   return 0;
 }
 
-void AoCRunner::runPart(int year, int day, int part, const std::string &result, bool example) {
+void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example) {
+  std::string input = !example ? aocInput.getInput(year, day) : aocDay->getExampleInput();
+
+  std::string result = part == 1 ? aocDay->part1(input, example) : aocDay->part2(input, example);
   if (result.empty()) return;
 
   wprintf(L"%d-%02d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
@@ -61,11 +61,9 @@ void AoCRunner::parseArgs(int argc, char *argv[]) {
   while ((opt = getopt_long(argc, argv, "hvy:d:p:", longopts, nullptr)) != -1) {
     switch (opt) {
       case 'h':
-        printHelpFlag = true;
-        return;
       case 'v':
-        printVersionFlag = true;
-        return;
+        opt == 'h' ? printHelp() : printVersion();
+        exit(0);
       case 'y':
         selector.year = parseArgToInt("year", optarg);
         break;
@@ -80,8 +78,7 @@ void AoCRunner::parseArgs(int argc, char *argv[]) {
         break;
     }
   }
-
-  validateSelector();
+  validateAoCSelector();
 }
 
 int AoCRunner::parseArgToInt(const char *option, char *arg) {
@@ -89,38 +86,32 @@ int AoCRunner::parseArgToInt(const char *option, char *arg) {
     return std::stoi(arg);
   } catch (std::invalid_argument &e) {
     fwprintf(stderr, L"\033[91mError:\033[0m Invalid argument for option %s, (%s)\n", option, arg);
-    error = 1;
   } catch (std::out_of_range &e) {
     fwprintf(stderr, L"\033[91mError:\033[0m Argument out of range for option %s (%s)\n", option, arg);
-    error = 1;
   }
 
-  return -1;
+  exit(1);
 }
 
-void AoCRunner::validateSelector() {
+void AoCRunner::validateAoCSelector() {
   if (selector.year != -1 && selector.year < 2015) {
     fwprintf(stderr, L"\033[91mError:\033[0m Invalid year %d\n", selector.year);
-    error = 1;
+    exit(1);
   }
   if (selector.day != -1 && (selector.day < 1 || selector.day > 25)) {
     fwprintf(stderr, L"\033[91mError:\033[0m Invalid day %d\n", selector.day);
-    error = 1;
+    exit(1);
   }
   if (selector.part != -1 && (selector.part < 1 || selector.part > 2)) {
     fwprintf(stderr, L"\033[91mError:\033[0m Invalid part %d\n", selector.part);
-    error = 1;
+    exit(1);
   }
 }
 
-int AoCRunner::printVersion() {
+void AoCRunner::printVersion() {
   wprintf(L"Advent of Code Runner v0.1\n");
-
-  return 0;
 }
 
-int AoCRunner::printHelp() {
+void AoCRunner::printHelp() {
   wprintf(L"Usage: aoc-runner [options]\n");
-
-  return 0;
 }
