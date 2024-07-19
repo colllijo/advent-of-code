@@ -1,4 +1,5 @@
 #include "AoCRunner.hpp"
+
 #include "AoCDay.hpp"
 
 #include <cstdlib>
@@ -43,7 +44,7 @@ void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day
   std::string result = part == 1 ? aocDay->part1(input, example) : aocDay->part2(input, example);
   if (result.empty()) return;
 
-  wprintf(L"%d-%02d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
+  wprintf(L"%d: Day %d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
 }
 
 void AoCRunner::parseArgs(int argc, char *argv[]) {
@@ -76,8 +77,14 @@ void AoCRunner::parseArgs(int argc, char *argv[]) {
       case 'x':
         runExamples = false;
         break;
+      case '?':
+        fwprintf(stderr, L"\033[91mError:\033[0m Bad argument\n");
+        exit(1);
+      default:
+        abort();
     }
   }
+
   validateAoCSelector();
 }
 
