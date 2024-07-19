@@ -1,6 +1,3 @@
 [submodule "lib/curlpp"]
 	path = lib/curlpp
 	url = https://github.com/jpbarrette/curlpp/
-[submodule "lib/openssl-cmake"]
-	path = lib/openssl-cmake
-	url = https://github.com/viaduck/openssl-cmake.git
