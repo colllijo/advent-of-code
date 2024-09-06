@@ -23,6 +23,8 @@ int AoCRunner::run(int argc, char *argv[]) {
     for (auto& [day, aocDay] : aocYear.getDays()) {
       if (selector.day != -1 && selector.day != day) continue;
 
+      runExamples = runExamples && aocDay->hasExampleInput();
+
       std::string input;
       if (selector.part != 2) {
         if (runExamples) runPart(aocDay, year, day, 1, true);
