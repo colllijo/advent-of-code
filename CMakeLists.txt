@@ -15,7 +15,11 @@ set(SOURCE "${SOURCE_DIR}main.cpp")
 set(HEADER "${INCLUDE_DIR}AoCYears.hpp")
 
 # Set libraries
-set(LIBRARIES "coll-aoc-runner")
+set(LIBRARIES
+  "coll-aoc-runner"
+  "curlpp"
+  "json"
+)
 foreach(library ${LIBRARIES})
   add_subdirectory("${LIBRARY_DIR}${library}")
 endforeach()
@@ -26,5 +30,8 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER}
 )
 
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDE_DIR})
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${LIBRARIES})
-
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE
+  coll-aoc-runner
+  curlpp::curlpp
+  nlohmann_json::nlohmann_json
+)

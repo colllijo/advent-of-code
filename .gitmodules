@@ -1,0 +1,6 @@
+[submodule "lib/curlpp"]
+	path = lib/curlpp
+	url = https://github.com/jpbarrette/curlpp/
+[submodule "lib/json"]
+	path = lib/json
+	url = git@github.com:nlohmann/json.git

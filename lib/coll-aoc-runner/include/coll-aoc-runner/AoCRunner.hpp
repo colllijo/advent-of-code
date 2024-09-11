@@ -1,13 +1,15 @@
 #ifndef COLL_AOC_RUNNER_AOC_RUNNER_HPP
 #define COLL_AOC_RUNNER_AOC_RUNNER_HPP
 
-#include <string>
+#include "AoCInput.hpp"
+#include <memory>
 #pragma once
 
-#include <unordered_map>
+#include <map>
 
 #include "AoCSelector.hpp"
 #include "AoCYear.hpp"
+#include "AoCDay.hpp"
 
 class AoCRunner {
 public:
@@ -19,25 +21,20 @@ public:
   int run(int argc, char *argv[]);
 
 private:
-  std::unordered_map<int, AoCYear> years;
+  std::map<int, AoCYear> years;
   AoCSelector selector;
-
-  int error;
-
-  bool printHelpFlag;
-  bool printVersionFlag;
+  AoCInput aocInput;
 
   bool runExamples;
 
   void parseArgs(int argc, char *argv[]);
   int parseArgToInt(const char *option, char *arg);
+  void validateAoCSelector();
 
-  void validateSelector();
+  void runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example = false);
 
-  void runPart(int year, int day, int part, const std::string &result, bool example = false);
-
-  int printVersion();
-  int printHelp();
+  void printVersion();
+  void printHelp();
 };
 
 #endif
