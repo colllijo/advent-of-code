@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 set(PROJECT_NAME "COLL-AdventOfCode")
 set(EXECUTABLE_NAME "coll-aoc")
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_DIR "src/")
 set(INCLUDE_DIR "include/")
@@ -15,14 +16,10 @@ set(SOURCE "${SOURCE_DIR}main.cpp")
 set(HEADER "${INCLUDE_DIR}AoCYears.hpp")
 
 # Set libraries
-set(LIBRARIES
-  "coll-aoc-runner"
-  "curlpp"
-  "json"
-)
-foreach(library ${LIBRARIES})
-  add_subdirectory("${LIBRARY_DIR}${library}")
-endforeach()
+add_subdirectory("${LIBRARY_DIR}coll-aoc-runner")
+
+# Add libraries
+find_package(nlohmann_json REQUIRED)
 
 project(${PROJECT_NAME})
 add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER}
@@ -32,6 +29,5 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER}
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE
   coll-aoc-runner
-  curlpp::curlpp
   nlohmann_json::nlohmann_json
 )
