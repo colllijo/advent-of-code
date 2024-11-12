@@ -9,10 +9,10 @@ using namespace std;
 
 class Day_: public AoCDay {
 public:
-  Day_();
+	Day_();
 
-  string part1(const string& input, bool example = false) override;
-  string part2(const string& input, bool example = false) override;
+	string part1(const string& input, bool example = false) override;
+	string part2(const string& input, bool example = false) override;
 };
 
 #endif
