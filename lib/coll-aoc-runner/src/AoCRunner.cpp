@@ -46,7 +46,7 @@ void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day
   std::string result = part == 1 ? aocDay->part1(input, example) : aocDay->part2(input, example);
   if (result.empty()) return;
 
-  wprintf(L"%d: Day %d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
+  printf("%d: Day %d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
 }
 
 void AoCRunner::parseArgs(int argc, char *argv[]) {
@@ -80,7 +80,7 @@ void AoCRunner::parseArgs(int argc, char *argv[]) {
         runExamples = false;
         break;
       case '?':
-        fwprintf(stderr, L"\033[91mError:\033[0m Bad argument\n");
+        fprintf(stderr, "\033[91mError:\033[0m Bad argument\n");
         exit(1);
       default:
         abort();
@@ -94,9 +94,9 @@ int AoCRunner::parseArgToInt(const char *option, char *arg) {
   try {
     return std::stoi(arg);
   } catch (std::invalid_argument &e) {
-    fwprintf(stderr, L"\033[91mError:\033[0m Invalid argument for option %s, (%s)\n", option, arg);
+    fprintf(stderr, "\033[91mError:\033[0m Invalid argument for option %s, (%s)\n", option, arg);
   } catch (std::out_of_range &e) {
-    fwprintf(stderr, L"\033[91mError:\033[0m Argument out of range for option %s (%s)\n", option, arg);
+    fprintf(stderr, "\033[91mError:\033[0m Argument out of range for option %s (%s)\n", option, arg);
   }
 
   exit(1);
@@ -104,23 +104,23 @@ int AoCRunner::parseArgToInt(const char *option, char *arg) {
 
 void AoCRunner::validateAoCSelector() {
   if (selector.year != -1 && selector.year < 2015) {
-    fwprintf(stderr, L"\033[91mError:\033[0m Invalid year %d\n", selector.year);
+    fprintf(stderr, "\033[91mError:\033[0m Invalid year %d\n", selector.year);
     exit(1);
   }
   if (selector.day != -1 && (selector.day < 1 || selector.day > 25)) {
-    fwprintf(stderr, L"\033[91mError:\033[0m Invalid day %d\n", selector.day);
+    fprintf(stderr, "\033[91mError:\033[0m Invalid day %d\n", selector.day);
     exit(1);
   }
   if (selector.part != -1 && (selector.part < 1 || selector.part > 2)) {
-    fwprintf(stderr, L"\033[91mError:\033[0m Invalid part %d\n", selector.part);
+    fprintf(stderr, "\033[91mError:\033[0m Invalid part %d\n", selector.part);
     exit(1);
   }
 }
 
 void AoCRunner::printVersion() {
-  wprintf(L"Advent of Code Runner v0.1\n");
+  printf("Advent of Code Runner v0.1\n");
 }
 
 void AoCRunner::printHelp() {
-  wprintf(L"Usage: aoc-runner [options]\n");
+  printf("Usage: aoc-runner [options]\n");
 }

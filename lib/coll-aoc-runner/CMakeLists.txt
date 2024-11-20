@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 set(PROJECT_NAME "COLL-AoC-Runner")
 set(LIBRARY_NAME "coll-aoc-runner")
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_DIR "src")
 set(INCLUDE_DIR "include")
@@ -30,7 +31,10 @@ include_directories(
   "${CMAKE_CURRENT_SOURCE_DIR}${INCLUDE_DIR}"
 )
 
+# Add libraries
 find_package(OpenSSL REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(CURL REQUIRED)
 
 project(${PROJECT_NAME})
 add_library(${LIBRARY_NAME} STATIC ${HEADER} ${SOURCE})
@@ -44,7 +48,7 @@ target_include_directories(
     $<INSTALL_INTERFACE:${INCLUDE_DIR}>
 )
 target_link_libraries(${LIBRARY_NAME} PRIVATE
-  curlpp::curlpp
+  CURL::libcurl
   OpenSSL::SSL
   OpenSSL::Crypto
 )
