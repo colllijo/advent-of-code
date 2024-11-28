@@ -33,6 +33,7 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/crypto/MD5.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCCache.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCLocalCache.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/math/Math.hpp"
 )
 
 include_directories(
