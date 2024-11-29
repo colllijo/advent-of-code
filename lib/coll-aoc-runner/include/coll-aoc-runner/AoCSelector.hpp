@@ -1,6 +1,3 @@
-#ifndef COLL_AOC_RUNNER_AOC_SELECTOR_HPP
-#define COLL_AOC_RUNNER_AOC_SELECTOR_HPP
-
 #pragma once
 
 /**
@@ -21,5 +18,3 @@ struct AoCSelector {
       : year(year), day(day), part(part) {}
   ~AoCSelector() = default;
 };
-
-#endif

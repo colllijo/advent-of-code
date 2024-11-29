@@ -1,6 +1,3 @@
-#ifndef COLL_AOC_RUNNER_AOC_DAY_HPP
-#define COLL_AOC_RUNNER_AOC_DAY_HPP
-
 #pragma once
 
 #include <string>
@@ -19,5 +16,3 @@ public:
 protected:
   std::string exampleInput;
 };
-
-#endif

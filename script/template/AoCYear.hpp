@@ -1,6 +1,3 @@
-#ifndef AOC_YEAR__HPP
-#define AOC_YEAR__HPP
-
 #pragma once
 
 #include <memory>
@@ -63,5 +60,3 @@ public:
 		setDay(25, std::make_shared<Day25_>(Day25_()));
 	}
 };
-
-#endif

@@ -14,6 +14,10 @@ set(SOURCE
   "${SOURCE_DIR}/AoCYear.cpp"
   "${SOURCE_DIR}/AoCInput.cpp"
   "${SOURCE_DIR}/AoCDay.cpp"
+  "${SOURCE_DIR}/AoCSubmitter.cpp"
+  "${SOURCE_DIR}/AoCIO.cpp"
+  "${SOURCE_DIR}/cache/AoCCache.cpp"
+  "${SOURCE_DIR}/cache/AoCLocalCache.cpp"
 )
 
 # Set headers
@@ -23,7 +27,12 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCDay.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCInput.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCSelector.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCSubmitter.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCStructs.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCIO.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/crypto/MD5.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCCache.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCLocalCache.hpp"
 )
 
 include_directories(
