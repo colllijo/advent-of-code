@@ -5,13 +5,14 @@
 #include <cstdlib>
 #include <cwchar>
 #include <filesystem>
+#include <format>
 #include <fstream>
 
 AoCInput::AoCInput()
 {
-	// Check if an input directory is set else use `<PROJECT_ROOT>/input/`
-	char *input = getenv("CAOC_INPUT_DIR");
-	if (input == nullptr)
+	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
+	char *root = getenv("CAOC_ROOT_DIR");
+	if (root == nullptr)
 	{
 		// Assume the binary is in the build folder
 		std::filesystem::path exe = std::filesystem::canonical("/proc/self/exe");
@@ -19,7 +20,7 @@ AoCInput::AoCInput()
 	}
 	else
 	{
-		inputDir = input;
+		inputDir = std::format("{}/input", root);
 	}
 
 	// Make sure the input directroy exists
@@ -96,17 +97,6 @@ void AoCInput::downloadInput(int year, int day)
 	if (res != CURLE_OK)
 	{
 		fprintf(stderr, "\033[31mFailed to download: %s\033[0m\n", curl_easy_strerror(res));
-		fclose(fp);
-		curl_easy_cleanup(curl);
-		exit(1);
-	}
-
-	// Check HTTP response code to ensure the download succeeded
-	long response_code;
-	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-	if (response_code != 200)
-	{
-		fprintf(stderr, "\033[31mFailed to download: HTTP response code %ld\033[0m\n", response_code);
 		fclose(fp);
 		curl_easy_cleanup(curl);
 		exit(1);

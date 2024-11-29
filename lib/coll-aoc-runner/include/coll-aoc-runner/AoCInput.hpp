@@ -1,24 +1,20 @@
-#ifndef COLL_AOC_RUNNER_AOC_INPUT_HPP
-#define COLL_AOC_RUNNER_AOC_INPUT_HPP
+#pragma once
 
 #include <filesystem>
 #include <string>
 
-#pragma once
-
-class AoCInput {
+class AoCInput
+{
 public:
-  AoCInput();
-  ~AoCInput();
+	AoCInput();
+	~AoCInput();
 
-  std::string getInput(int year, int day);
+	std::string getInput(int year, int day);
 
 private:
-  std::filesystem::path inputDir;
-  std::string authCookie;
+	std::filesystem::path inputDir;
+	std::string authCookie;
 
-  void loadAuthCookie();
-  void downloadInput(int year, int day);
+	void loadAuthCookie();
+	void downloadInput(int year, int day);
 };
-
-#endif

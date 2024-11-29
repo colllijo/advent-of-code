@@ -1,40 +1,39 @@
-#ifndef COLL_AOC_RUNNER_AOC_RUNNER_HPP
-#define COLL_AOC_RUNNER_AOC_RUNNER_HPP
-
-#include "AoCInput.hpp"
-#include <memory>
 #pragma once
 
 #include <map>
+#include <memory>
 
-#include "AoCSelector.hpp"
-#include "AoCYear.hpp"
 #include "AoCDay.hpp"
+#include "AoCInput.hpp"
+#include "AoCSelector.hpp"
+#include "AoCSubmitter.hpp"
+#include "AoCYear.hpp"
 
-class AoCRunner {
+class AoCRunner
+{
 public:
-  AoCRunner();
-  ~AoCRunner();
+	AoCRunner();
+	~AoCRunner();
 
-  void addYear(int year, const AoCYear &aocYear);
+	void addYear(int year, const AoCYear &aocYear);
 
-  int run(int argc, char *argv[]);
+	int run(int argc, char *argv[]);
 
 private:
-  std::map<int, AoCYear> years;
-  AoCSelector selector;
-  AoCInput aocInput;
+	std::map<int, AoCYear> years;
+	AoCSelector selector;
+	AoCInput aocInput;
+	AoCSubmitter aocSubmitter;
+	AoCIO& aocIO;
 
-  bool runExamples;
+	bool runExamples;
 
-  void parseArgs(int argc, char *argv[]);
-  int parseArgToInt(const char *option, char *arg);
-  void validateAoCSelector();
+	void parseArgs(int argc, char *argv[]);
+	int parseArgToInt(const char *option, char *arg);
+	void validateAoCSelector();
 
-  void runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example = false);
+	void runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example = false);
 
-  void printVersion();
-  void printHelp();
+	void printVersion();
+	void printHelp();
 };
-
-#endif

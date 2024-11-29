@@ -1,5 +1,4 @@
-#ifndef COLL_AOC_RUNNER_CRYPTO_MD5_HPP
-#define COLL_AOC_RUNNER_CRYPTO_MD5_HPP
+#pragma once
 
 #include <openssl/evp.h>
 #include <sstream>
@@ -42,5 +41,3 @@ namespace caoc {
       }
     }
   }
-
-#endif

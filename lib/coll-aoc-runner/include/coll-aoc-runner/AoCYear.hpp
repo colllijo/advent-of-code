@@ -1,6 +1,3 @@
-#ifndef COLL_AOC_RUNNER_AOC_YEAR_HPP
-#define COLL_AOC_RUNNER_AOC_YEAR_HPP
-
 #pragma once
 
 #include <memory>
@@ -22,5 +19,3 @@ public:
 private:
   std::map<int, std::shared_ptr<AoCDay>> days {};
 };
-
-#endif
