@@ -25,19 +25,8 @@ int AoCRunner::run(int argc, char *argv[])
 		{
 			if (selector.day != -1 && selector.day != day) continue;
 
-			runExamples = runExamples && aocDay->hasExampleInput();
-
-			std::string input;
-			if (selector.part != 2)
-			{
-				if (runExamples) runPart(aocDay, year, day, 1, true);
-				runPart(aocDay, year, day, 1);
-			}
-			if (selector.part != 1)
-			{
-				if (runExamples) runPart(aocDay, year, day, 2, true);
-				runPart(aocDay, year, day, 2);
-			}
+			if (selector.part != 2) runPart(aocDay, year, day, 1, runExamples);
+			if (selector.part != 1) runPart(aocDay, year, day, 2, runExamples);
 		}
 	}
 
@@ -46,24 +35,29 @@ int AoCRunner::run(int argc, char *argv[])
 
 void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example)
 {
-	std::string input = !example ? aocInput.getInput(year, day) : aocDay->getExampleInput();
+	std::string result;
+	std::string input = aocInput.getInput(year, day);
+	bool solved = false;
 
-	std::string result = part == 1 ? aocDay->part1(input, example) : aocDay->part2(input, example);
-	if (result.empty()) return;
+	std::string exampleResult;
+	std::string exampleInput = aocDay->getExampleInput();
+	bool exampleSolved = false;
 
-	printf("%d: Day %d Part %d %s: %s\n", year, day, part, example ? "Example" : "", result.c_str());
-	if (example) return;
+	if (example && !exampleInput.empty())
+		exampleResult = part == 1 ? aocDay->part1(exampleInput, true) : aocDay->part2(exampleInput, true);
+	result = part == 1 ? aocDay->part1(input) : aocDay->part2(input);
+
+	solved = !result.empty() && !result.starts_with("TODO");
+	exampleSolved = !exampleResult.empty() && !exampleResult.starts_with("TODO");
+
+	if (solved && exampleSolved) aocIO.printFullPartResult(year, day, part, result, exampleResult);
+	else if (solved) aocIO.printPartResult(year, day, part, result, false);
+	else if (exampleSolved) aocIO.printPartResult(year, day, part, exampleResult, true);
+
+	if (!solved) return;
 
 	auto [state, cached] = aocSubmitter.submit(year, day, part, result);
-
-	if (cached)
-	{
-		printf("Cached: %s\n", toString(state).c_str());
-	}
-	else if (state != AoCSolveState::UNDEFINED)
-	{
-		printf("Submitted result: %s\n", toString(state).c_str());
-	}
+	aocIO.printSolveState(state, cached);
 }
 
 void AoCRunner::parseArgs(int argc, char *argv[])
