@@ -1,5 +1,7 @@
 #include <coll-aoc-runner/AoCRunner.hpp>
 
+#include "AoCYears.hpp"
+
 int main(int argc, char *argv[]) {
   auto runner = AoCRunner();
 

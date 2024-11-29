@@ -5,28 +5,22 @@
 
 Day09_2016::Day09_2016()
 {
-	exampleInput =
-	    "ADVENT\n"
-	    "A(1x5)BC\n"
-	    "(3x3)XYZ\n"
-	    "A(2x2)BCD(2x2)EFG\n"
-	    "(6x1)(1x3)A\n"
-	    "X(8x2)(3x3)ABCY\n";
+	exampleInput = "X(8x2)(3x3)ABCY";
 }
 
-string decompress(string input, bool recursive = false)
+unsigned long decompress(string input)
 {
-	string decompressed = "";
+	unsigned long size = 0;
 
 	size_t pos = 0;
 	regex pattern(R"((\((\d+)x(\d+)\)))");
 	auto mBegin = sregex_iterator(input.begin(), input.end(), pattern);
 	auto mEnd = sregex_iterator();
 
-  if (mBegin == mEnd)
-  {
-    return input;
-  }
+	if (mBegin == mEnd)
+	{
+		return input.size();
+	}
 
 	for (sregex_iterator i = mBegin; i != mEnd; ++i)
 	{
@@ -38,25 +32,14 @@ string decompress(string input, bool recursive = false)
 
 		int length = stoi(match.str().substr(1, match.str().find('x') - 1));
 		int reps = stoi(match.str().substr(match.str().find('x') + 1));
-		string toRepeat = input.substr(match.position() + match.str().size(), length);
 
-		decompressed += input.substr(pos, match.position() - pos);
-		for (int i = 0; i < reps; i++)
-		{
-			decompressed += toRepeat;
-		}
-
+		size += match.position() - pos + reps * length;
 		pos = match.position() + match.str().size() + length;
 	}
 
-	decompressed += input.substr(pos);
+	size += input.size() - pos;
 
-  if (recursive)
-  {
-    return decompress(decompressed, true);
-  }
-
-	return decompressed;
+	return size;
 }
 
 string Day09_2016::part1(const string& input, bool example)
@@ -67,10 +50,47 @@ string Day09_2016::part1(const string& input, bool example)
 	string line;
 	while (getline(stream, line))
 	{
-		length += decompress(line).size();
+		length += decompress(line);
 	}
 
 	return to_string(length);
+}
+
+unsigned long recursiveDecompress(const std::string& input)
+{
+	unsigned long size = 0;
+
+	size_t pos = 0;
+	regex pattern(R"((\((\d+)x(\d+)\)))");
+	auto mBegin = sregex_iterator(input.begin(), input.end(), pattern);
+	auto mEnd = sregex_iterator();
+
+	printf("%s\n", input.c_str());
+	if (mBegin == mEnd)
+	{
+		return input.size();
+	}
+
+	for (sregex_iterator i = mBegin; i != mEnd; ++i)
+	{
+		smatch match = *i;
+		if (match.position() < pos)
+		{
+			continue;
+		}
+
+		int length = stoi(match.str().substr(1, match.str().find('x') - 1));
+		int reps = stoi(match.str().substr(match.str().find('x') + 1));
+
+		size += input.substr(pos, match.position() - pos).size();
+		size += reps * recursiveDecompress(input.substr(match.position() + match.str().size(), length));
+
+		pos = match.position() + match.str().size() + length;
+	}
+
+	size += input.substr(pos).size();
+
+	return size;
 }
 
 string Day09_2016::part2(const string& input, bool example)
@@ -81,9 +101,8 @@ string Day09_2016::part2(const string& input, bool example)
 	string line;
 	while (getline(stream, line))
 	{
-		string decompressed = "";
-
-		length += decompress(line, true).size();
+		length += recursiveDecompress(line);
+		break;
 	}
 
 	return to_string(length);
