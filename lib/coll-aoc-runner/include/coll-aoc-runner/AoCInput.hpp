@@ -1,20 +1,22 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 #include <string>
+
+#include "AoCCookie.hpp"
 
 class AoCInput
 {
 public:
-	AoCInput();
+	AoCInput(const std::shared_ptr<AoCCookie>& aocCookie);
 	~AoCInput();
 
 	std::string getInput(int year, int day);
 
 private:
 	std::filesystem::path inputDir;
-	std::string authCookie;
+	std::shared_ptr<AoCCookie> cookie;
 
-	void loadAuthCookie();
 	void downloadInput(int year, int day);
 };

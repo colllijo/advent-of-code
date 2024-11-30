@@ -3,28 +3,14 @@
 #include <curl/curl.h>
 
 #include <format>
+#include <memory>
 #include <tuple>
 
 #include "AoCStructs.hpp"
 
-AoCSubmitter::AoCSubmitter() : aocIO(AoCIO::getInstance())
+AoCSubmitter::AoCSubmitter(const std::shared_ptr<AoCCache> &aocCache, const std::shared_ptr<AoCCookie> &aocCookie) : cache(aocCache), cookie(aocCookie), aocIO(AoCIO::getInstance())
 {
-	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
-	char *root = getenv("CAOC_ROOT_DIR");
-	if (root == nullptr)
-	{
-		// Assume the binary is in the build folder
-		std::filesystem::path exe = std::filesystem::canonical("/proc/self/exe");
-		cacheDir = exe.parent_path().parent_path() / ".cache" / "aoc-cache.bin";
-	}
-	else
-	{
-		cacheDir = std::format("{}/.cache/aoc-cache.bin", root);
-	}
-
-	cache = std::make_unique<AoCCache>(cacheDir);
 }
-
 AoCSubmitter::~AoCSubmitter() = default;
 
 std::tuple<AoCSolveState, bool> AoCSubmitter::submit(int year, int day, int part, const std::string &answer)
@@ -56,16 +42,14 @@ std::tuple<AoCSolveState, bool> AoCSubmitter::submit(int year, int day, int part
 	return {response, false};
 }
 
-size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
-	((std::string *)userp)->append((char *)contents, size * nmemb);
-	return size * nmemb;
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
 }
 
 AoCSolveState AoCSubmitter::submitAnswer(int year, int day, int part, const std::string &answer)
 {
-	loadAuthCookie();
-
 	std::string url = "https://adventofcode.com/" + std::to_string(year) + "/day/" + std::to_string(day) + "/answer";
 	std::string data = "level=" + std::to_string(part) + "&answer=" + answer;
 	std::string readBuffer;
@@ -78,7 +62,7 @@ AoCSolveState AoCSubmitter::submitAnswer(int year, int day, int part, const std:
 	}
 
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(curl, CURLOPT_COOKIE, ("session=" + authCookie).c_str());
+	curl_easy_setopt(curl, CURLOPT_COOKIE, ("session=" + cookie->getSession()).c_str());
 	curl_easy_setopt(curl, CURLOPT_POST, 1L);
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -128,18 +112,4 @@ AoCSolveState AoCSubmitter::submitAnswer(int year, int day, int part, const std:
 		printf("Received unknown response:\n %s\n\n", readBuffer.c_str());
 		return AoCSolveState::UNDEFINED;
 	}
-}
-
-void AoCSubmitter::loadAuthCookie()
-{
-	char *cookie = getenv("CAOC_AUTH");
-	if (cookie == nullptr)
-	{
-		fprintf(stderr,
-		        "\033[31mAuthorisation cookie not set.\nPlease set the "
-		        "`CAOC_AUTH` environment variable.\033[0m\n");
-		exit(1);
-	}
-
-	authCookie = cookie;
 }

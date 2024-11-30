@@ -4,11 +4,9 @@
 
 #include <cstdlib>
 #include <cwchar>
-#include <filesystem>
-#include <format>
 #include <fstream>
 
-AoCInput::AoCInput()
+AoCInput::AoCInput(const std::shared_ptr<AoCCookie>& aocCookie): cookie(aocCookie)
 {
 	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
 	char *root = getenv("CAOC_ROOT_DIR");
@@ -56,24 +54,8 @@ std::string AoCInput::getInput(int year, int day)
 	return input;
 }
 
-void AoCInput::loadAuthCookie()
-{
-	char *cookie = getenv("CAOC_AUTH");
-	if (cookie == nullptr)
-	{
-		fprintf(stderr,
-		        "\033[31mAuthorisation cookie not set.\nPlease set the "
-		        "`CAOC_AUTH` environment variable.\033[0m\n");
-		exit(1);
-	}
-
-	authCookie = cookie;
-}
-
 void AoCInput::downloadInput(int year, int day)
 {
-	loadAuthCookie();
-
 	// Make sure the directory for the year exists
 	if (!std::filesystem::is_directory(inputDir / std::to_string(year))) std::filesystem::create_directory(inputDir / std::to_string(year));
 
@@ -89,7 +71,7 @@ void AoCInput::downloadInput(int year, int day)
 	}
 
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(curl, CURLOPT_COOKIE, ("session=" + authCookie).c_str());
+	curl_easy_setopt(curl, CURLOPT_COOKIE, ("session=" + cookie->getSession()).c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, nullptr);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 

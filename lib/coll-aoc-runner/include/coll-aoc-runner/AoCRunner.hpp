@@ -8,6 +8,8 @@
 #include "AoCSelector.hpp"
 #include "AoCSubmitter.hpp"
 #include "AoCYear.hpp"
+#include "AoCCookie.hpp"
+#include "cache/AoCCache.hpp"
 
 class AoCRunner
 {
@@ -22,9 +24,14 @@ public:
 private:
 	std::map<int, AoCYear> years;
 	AoCSelector selector;
-	AoCInput aocInput;
-	AoCSubmitter aocSubmitter;
+
 	AoCIO& aocIO;
+
+	std::shared_ptr<AoCCache> cache;
+	std::shared_ptr<AoCCookie> cookie;
+
+	std::unique_ptr<AoCInput> aocInput;
+	std::unique_ptr<AoCSubmitter> aocSubmitter;
 
 	bool runExamples;
 

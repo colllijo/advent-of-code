@@ -16,6 +16,7 @@ set(SOURCE
   "${SOURCE_DIR}/AoCDay.cpp"
   "${SOURCE_DIR}/AoCSubmitter.cpp"
   "${SOURCE_DIR}/AoCIO.cpp"
+  "${SOURCE_DIR}/AoCCookie.cpp"
   "${SOURCE_DIR}/cache/AoCCache.cpp"
   "${SOURCE_DIR}/cache/AoCLocalCache.cpp"
 )
@@ -30,6 +31,7 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCSubmitter.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCStructs.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCIO.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCCookie.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/crypto/MD5.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCCache.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCLocalCache.hpp"
@@ -45,6 +47,13 @@ include_directories(
 find_package(OpenSSL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(CURL REQUIRED)
+
+## Optional sqlite3 for reading session cookie from browser
+find_package(SQLite3 QUIET)
+
+if(SQLite3_FOUND)
+  add_compile_definitions(SQLITE3_FOUND)
+endif()
 
 project(${PROJECT_NAME})
 add_library(${LIBRARY_NAME} STATIC ${HEADER} ${SOURCE})
@@ -62,3 +71,7 @@ target_link_libraries(${LIBRARY_NAME} PRIVATE
   OpenSSL::SSL
   OpenSSL::Crypto
 )
+
+if(SQLite3_FOUND)
+  target_link_libraries(${LIBRARY_NAME} PRIVATE ${SQLite3_LIBRARIES})
+endif()

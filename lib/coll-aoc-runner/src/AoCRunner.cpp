@@ -2,13 +2,36 @@
 
 #include <getopt.h>
 
+#include <filesystem>
 #include <cstdlib>
 #include <cwchar>
 #include <string>
 
 #include "AoCDay.hpp"
 
-AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance()) {}
+AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance())
+{
+	std::filesystem::path cacheDir;
+
+	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
+	char *root = getenv("CAOC_ROOT_DIR");
+	if (root == nullptr)
+	{
+		// Assume the binary is in the build folder
+		std::filesystem::path exe = std::filesystem::canonical("/proc/self/exe");
+		cacheDir = exe.parent_path().parent_path() / ".cache" / "aoc-cache.bin";
+	}
+	else
+	{
+		cacheDir = std::format("{}/.cache/aoc-cache.bin", root);
+	}
+
+	cache = std::make_unique<AoCCache>(cacheDir);
+	cookie = std::make_shared<AoCCookie>(cache);
+
+	aocInput = std::make_unique<AoCInput>(cookie);
+	aocSubmitter = std::make_unique<AoCSubmitter>(cache, cookie);
+}
 AoCRunner::~AoCRunner() = default;
 
 void AoCRunner::addYear(int year, const AoCYear &aocYear) { years[year] = aocYear; }
@@ -36,27 +59,29 @@ int AoCRunner::run(int argc, char *argv[])
 void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example)
 {
 	std::string result;
-	std::string input = aocInput.getInput(year, day);
+	std::string input = aocInput->getInput(year, day);
 	bool solved = false;
 
 	std::string exampleResult;
 	std::string exampleInput = aocDay->getExampleInput();
 	bool exampleSolved = false;
 
-	if (example && !exampleInput.empty())
-		exampleResult = part == 1 ? aocDay->part1(exampleInput, true) : aocDay->part2(exampleInput, true);
+	if (example && !exampleInput.empty()) exampleResult = part == 1 ? aocDay->part1(exampleInput, true) : aocDay->part2(exampleInput, true);
 	result = part == 1 ? aocDay->part1(input) : aocDay->part2(input);
 
 	solved = !result.empty() && !result.starts_with("TODO");
 	exampleSolved = !exampleResult.empty() && !exampleResult.starts_with("TODO");
 
-	if (solved && exampleSolved) aocIO.printFullPartResult(year, day, part, result, exampleResult);
-	else if (solved) aocIO.printPartResult(year, day, part, result, false);
-	else if (exampleSolved) aocIO.printPartResult(year, day, part, exampleResult, true);
+	if (solved && exampleSolved)
+		aocIO.printFullPartResult(year, day, part, result, exampleResult);
+	else if (solved)
+		aocIO.printPartResult(year, day, part, result, false);
+	else if (exampleSolved)
+		aocIO.printPartResult(year, day, part, exampleResult, true);
 
 	if (!solved) return;
 
-	auto [state, cached] = aocSubmitter.submit(year, day, part, result);
+	auto [state, cached] = aocSubmitter->submit(year, day, part, result);
 	aocIO.printSolveState(state, cached);
 }
 
