@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
   // Add years to the runner
   runner.addYear(2015, AoCYear_2015());
   runner.addYear(2016, AoCYear_2016());
+  runner.addYear(2024, AoCYear_2024());
 
   return runner.run(argc, argv);
 }
