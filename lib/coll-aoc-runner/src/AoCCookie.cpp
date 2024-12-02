@@ -112,6 +112,7 @@ bool AoCCookie::isValidSession(const std::string& session)
 
 std::optional<std::string> AoCCookie::readCookieFromSQLite(const fs::path& path) 
 {
+#ifdef SQLITE3_FOUND
 	fs::path tmpDir = fs::temp_directory_path();
 	fs::path dbFile = tmpDir / "aoc_cookies.sqlite";
 	fs::copy_file(path, dbFile, fs::copy_options::overwrite_existing);
@@ -142,4 +143,7 @@ std::optional<std::string> AoCCookie::readCookieFromSQLite(const fs::path& path)
 
 	if (!session.empty()) return session;
 	return std::nullopt;
+#else
+  return std::nullopt;
+#endif
 }

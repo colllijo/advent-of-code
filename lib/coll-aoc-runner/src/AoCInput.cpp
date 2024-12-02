@@ -18,7 +18,7 @@ AoCInput::AoCInput(const std::shared_ptr<AoCCookie>& aocCookie): cookie(aocCooki
 	}
 	else
 	{
-		inputDir = std::format("{}/input", root);
+		inputDir = std::string(root) + "/input";
 	}
 
 	// Make sure the input directroy exists

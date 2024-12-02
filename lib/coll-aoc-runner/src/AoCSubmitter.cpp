@@ -15,7 +15,7 @@ AoCSubmitter::~AoCSubmitter() = default;
 
 std::tuple<AoCSolveState, bool> AoCSubmitter::submit(int year, int day, int part, const std::string &answer)
 {
-	auto cached = cache->get(std::format("{}/{}/{}/{}", year, day, part, answer));
+	auto cached = cache->get(std::to_string(year) + "/" + std::to_string(day) + "/" + std::to_string(part) + "/" + answer);
 	if (cached.has_value())
 	{
 		return {fromString(cached.value()), true};
@@ -36,7 +36,7 @@ std::tuple<AoCSolveState, bool> AoCSubmitter::submit(int year, int day, int part
 			state = AoCSolveState::ALREADY_SOLVED;
 		}
 
-		cache->set(std::format("{}/{}/{}/{}", year, day, part, answer), toString(state));
+		cache->set(std::to_string(year) + "/" + std::to_string(day) + "/" + std::to_string(part) + "/" + answer, toString(state));
 	}
 
 	return {response, false};

@@ -23,7 +23,7 @@ AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance())
 	}
 	else
 	{
-		cacheDir = std::format("{}/.cache/aoc-cache.bin", root);
+		cacheDir = std::string(root) + "/.cache/aoc-cache.bin";
 	}
 
 	cache = std::make_unique<AoCCache>(cacheDir);
