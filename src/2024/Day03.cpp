@@ -21,8 +21,6 @@ string Day03_2024::part1(const string& input, bool example)
 	{
 		smatch match = *i;
 
-		printf("Match: %s\n", match.str().c_str());
-
 		int left = stoi(match.str().substr(4, match.str().find(',') - 1));
 		int right = stoi(match.str().substr(match.str().find(',') + 1));
 
