@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "coll-aoc-runner/strings/Format.hpp"
+#include "coll-aoc-runner/structs/Direction.hpp"
 
 namespace caoc::structs
 {
@@ -23,8 +24,9 @@ namespace caoc::structs
 		int width() const;
 		int height() const;
 
+    void set(int x, int y, T value);
 		T get(int x, int y) const;
-		void set(int x, int y, T value);
+    T move(int x, int y, Direction direction, int magnitude = 1) const;
 
 		std::vector<T> row(int y) const;
 		std::vector<std::vector<T>> rows() const;
@@ -80,6 +82,14 @@ namespace caoc::structs
 	}
 
 	template <typename T>
+	void Grid<T>::set(int x, int y, T value)
+	{
+		if (y < 0 || y >= m_height || x < 0 || x >= m_width) throw std::out_of_range("Out of bounds");
+
+		m_grid[y][x] = value;
+	}
+
+	template <typename T>
 	T Grid<T>::get(int x, int y) const
 	{
 		if (y < 0 || y >= m_height || x < 0 || x >= m_width) throw std::out_of_range("Out of bounds");
@@ -87,13 +97,16 @@ namespace caoc::structs
 		return m_grid[y][x];
 	}
 
-	template <typename T>
-	void Grid<T>::set(int x, int y, T value)
-	{
-		if (y < 0 || y >= m_height || x < 0 || x >= m_width) throw std::out_of_range("Out of bounds");
+  template <typename T>
+  T Grid<T>::move(int x, int y, Direction direction, int magnitude) const
+  {
+    int mX = x + direction.direction().first * magnitude;
+    int mY = y + direction.direction().second * magnitude;
 
-		m_grid[y][x] = value;
-	}
+    if (mY < 0 || mY >= m_height || mX < 0 || mX >= m_width) throw std::out_of_range("Out of bounds");
+
+    return m_grid[mY][mX];
+  }
 
 	template <typename T>
 	int Grid<T>::width() const
