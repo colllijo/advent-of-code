@@ -3,6 +3,8 @@
 #include <sstream>
 #include <vector>
 
+#include "coll-aoc-runner/structs/Grid.hpp"
+
 Day04_2024::Day04_2024()
 {
 	exampleInput =
@@ -37,23 +39,10 @@ std::vector<std::vector<char>> rotate90Degrees(const std::vector<std::vector<cha
 
 string Day04_2024::part1(const string& input, bool example)
 {
-	long long count = 0;
-	vector<vector<char>> grid;
+	int count = 0;
+	caoc::structs::Grid<char> grid(input);
 
-	stringstream stream(input);
-	string line;
-	while (getline(stream, line))
-	{
-		vector<char> row;
-
-		for (char c : line)
-		{
-			row.push_back(c);
-		}
-		grid.push_back(row);
-	}
-
-	for (auto row : grid)
+	for (const auto& row : grid.rows())
 	{
 		for (int i = 0; i < row.size() - 3; i++)
 		{
@@ -64,37 +53,31 @@ string Day04_2024::part1(const string& input, bool example)
 		}
 	}
 
-	vector<vector<char>> rotated = rotate90Degrees(grid);
-
-	for (auto row : rotated)
+	for (const auto& column : grid.columns())
 	{
-		for (int i = 0; i < row.size() - 3; i++)
+		for (int i = 0; i < column.size() - 3; i++)
 		{
-			if ((row[i] == 'X' && row[i + 1] == 'M' && row[i + 2] == 'A' && row[i + 3] == 'S') ||
-				(row[i] == 'S' && row[i + 1] == 'A' && row[i + 2] == 'M' && row[i + 3] == 'X'))
+			if ((column[i] == 'X' && column[i + 1] == 'M' && column[i + 2] == 'A' && column[i + 3] == 'S') ||
+			    (column[i] == 'S' && column[i + 1] == 'A' && column[i + 2] == 'M' && column[i + 3] == 'X'))
 			{
 				count++;
 			}
 		}
 	}
 
-    for (int i = 0; i < grid.size() - 3; i++) {
-        for (int j = 0; j < grid[i].size() - 3; j++) {
-            if ((grid[i][j] == 'X' && grid[i + 1][j + 1] == 'M' && grid[i + 2][j + 2] == 'A' && grid[i + 3][j + 3] == 'S')
-                || (grid[i][j] == 'S' && grid[i + 1][j + 1] == 'A' && grid[i + 2][j + 2] == 'M' && grid[i + 3][j + 3] == 'X')) {
-                count++;
-            }
-        }
-    }
+	for (const auto& diagonal : grid.diagonals())
+	{
+		if (diagonal.size() < 3) continue;
 
-    for (int i = 3; i < grid.size(); i++) {
-        for (int j = 0; j < grid[i].size() - 3; j++) {
-            if ((grid[i][j] == 'X' && grid[i - 1][j + 1] == 'M' && grid[i - 2][j + 2] == 'A' && grid[i - 3][j + 3] == 'S')
-                || (grid[i][j] == 'S' && grid[i - 1][j + 1] == 'A' && grid[i - 2][j + 2] == 'M' && grid[i - 3][j + 3] == 'X')) {
-                count++;
-            }
-        }
-    }
+		for (int i = 0; i < diagonal.size() - 3; i++)
+		{
+			if ((diagonal[i] == 'X' && diagonal[i + 1] == 'M' && diagonal[i + 2] == 'A' && diagonal[i + 3] == 'S') ||
+			    (diagonal[i] == 'S' && diagonal[i + 1] == 'A' && diagonal[i + 2] == 'M' && diagonal[i + 3] == 'X'))
+			{
+				count++;
+			}
+		}
+	}
 
 	return to_string(count);
 }
@@ -102,39 +85,22 @@ string Day04_2024::part1(const string& input, bool example)
 string Day04_2024::part2(const string& input, bool example)
 {
 	long long count = 0;
-	vector<vector<char>> grid;
+  caoc::structs::Grid<char> grid(input);
 
-	stringstream stream(input);
-	string line;
-	while (getline(stream, line))
+	for (int y = 0; y < grid.height() - 2; y++)
 	{
-		vector<char> row;
-
-		for (char c : line)
+		for (int x = 0; x < grid.width() - 2; x++)
 		{
-			row.push_back(c);
-		}
-		grid.push_back(row);
-	}
-
-	for (int i = 0; i < grid.size() - 2; i++)
-	{
-		for (int j = 0; j < grid[i].size() - 2; j++)
-		{
-			if (grid[i + 1][j +  1] != 'A') continue;
+			if (grid(x + 1, y + 1) != 'A') continue;
 
 			int crossCount = 0;
 
-			if (grid[i][j] == 'M' && grid[i + 2][j + 2] == 'S') crossCount++;
-			if (grid[i][j] == 'S' && grid[i + 2][j + 2] == 'M') crossCount++;
-			if (grid[i + 2][j] == 'M' && grid[i][j + 2] == 'S') crossCount++;
-			if (grid[i + 2][j] == 'S' && grid[i][j + 2] == 'M') crossCount++;
+      if (grid(x, y) == 'M' && grid(x + 2, y + 2) == 'S') crossCount++;
+      if (grid(x, y) == 'S' && grid(x + 2, y + 2) == 'M') crossCount++;
+      if (grid(x + 2, y) == 'M' && grid(x, y + 2) == 'S') crossCount++;
+      if (grid(x + 2, y) == 'S' && grid(x, y + 2) == 'M') crossCount++;
 
-			if (crossCount >= 2)
-			{
-				if (!example) printf("%d, %d\n", i, j);
-				count++;
-			}
+			if (crossCount >= 2) count++;
 		}
 	}
 
