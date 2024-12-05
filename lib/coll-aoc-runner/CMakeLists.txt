@@ -17,6 +17,7 @@ set(SOURCE
   "${SOURCE_DIR}/AoCSubmitter.cpp"
   "${SOURCE_DIR}/AoCIO.cpp"
   "${SOURCE_DIR}/AoCCookie.cpp"
+  "${SOURCE_DIR}/strings/Format.cpp"
   "${SOURCE_DIR}/cache/AoCCache.cpp"
   "${SOURCE_DIR}/cache/AoCLocalCache.cpp"
 )
@@ -32,6 +33,8 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCStructs.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCIO.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCCookie.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/strings/Format.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Grid.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/crypto/MD5.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCCache.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCLocalCache.hpp"
