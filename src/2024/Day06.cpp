@@ -57,6 +57,8 @@ solve:
 				return Direction::WEST;
 			case Direction::WEST:
 				return Direction::NORTH;
+      default:
+        return static_cast<Direction::Value>(dir);
 		}
 	};
 
@@ -85,7 +87,8 @@ solve:
 
 string Day06_2024::part2(const string& input, bool example)
 {
-	set<pair<int, int>> visited{};
+	set<pair<int, int>> positions{};
+  set<tuple<int, int, Direction>> visited{};
 	pair<int, int> position{0, 0};
 	Grid<char> grid{input};
 	Direction dir = Direction::NORTH;
@@ -115,6 +118,8 @@ solve:
 				return Direction::WEST;
 			case Direction::WEST:
 				return Direction::NORTH;
+      default:
+        return static_cast<Direction::Value>(dir);
 		}
 	};
 	auto isLoop = [&turnRight](Grid<char>& grid, pair<int, int> pos, auto& isLoop, Direction dir = Direction::NORTH, set<tuple<int, int, Direction>> visited = {}) -> bool
@@ -126,14 +131,11 @@ solve:
 		visited.insert({pos.first, pos.second, dir});
 		try
 		{
-			if (grid.move(pos.first, pos.second, dir) != '#')
-			{
-				pos = {pos.first + dir.direction().first, pos.second + dir.direction().second};
-			}
-			else
-			{
-				dir = turnRight(dir);
-			}
+      int magnitude = 0;
+      while (grid.move(pos.first, pos.second, dir, magnitude + 1) != '#') magnitude++;
+
+      pos = {pos.first + dir.direction().first * magnitude, pos.second + dir.direction().second * magnitude};
+      dir = turnRight(dir);
 		}
 		catch (const exception& e)
 		{
@@ -143,6 +145,8 @@ solve:
 	};
 
 	auto pathPos = position;
+	long long loops = 0;
+  int i = 0;
 	try
 	{
 		for (;;)
@@ -150,7 +154,22 @@ solve:
 			if (grid.move(pathPos.first, pathPos.second, dir) != '#')
 			{
 				pathPos = {pathPos.first + dir.direction().first, pathPos.second + dir.direction().second};
-				visited.insert(pathPos);
+
+        if (positions.find(pathPos) == positions.end())
+        {
+          auto changedGrid = grid;
+          pair<int, int> changedPos = {pathPos.first - dir.direction().first, pathPos.second - dir.direction().second};
+          auto changeVisited = visited;
+          changedGrid.set(pathPos.first, pathPos.second, '#');
+
+          if (isLoop(changedGrid, changedPos, isLoop, dir))
+          {
+            loops++;
+          }
+        }
+
+				positions.insert(pathPos);
+        visited.insert({pathPos.first, pathPos.second, dir});
 			}
 			else
 			{
@@ -160,18 +179,6 @@ solve:
 	}
 	catch (const exception& e)
 	{
-	}
-
-	long long loops = 0;
-	for (const auto& [x, y] : visited)
-	{
-		auto changedGrid = grid;
-		changedGrid.set(x, y, '#');
-
-		if (isLoop(changedGrid, position, isLoop))
-		{
-			loops++;
-		}
 	}
 
 	return to_string(loops);
