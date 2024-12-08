@@ -24,9 +24,11 @@ namespace caoc::structs
 		int width() const;
 		int height() const;
 
-    void set(int x, int y, T value);
+		void set(int x, int y, T value);
 		T get(int x, int y) const;
-    T move(int x, int y, Direction direction, int magnitude = 1) const;
+		T move(int x, int y, Direction direction, int magnitude = 1) const;
+
+		bool inBounds(int x, int y) const;
 
 		std::vector<T> row(int y) const;
 		std::vector<std::vector<T>> rows() const;
@@ -97,16 +99,22 @@ namespace caoc::structs
 		return m_grid[y][x];
 	}
 
-  template <typename T>
-  T Grid<T>::move(int x, int y, Direction direction, int magnitude) const
-  {
-    int mX = x + direction.direction().first * magnitude;
-    int mY = y + direction.direction().second * magnitude;
+	template <typename T>
+	T Grid<T>::move(int x, int y, Direction direction, int magnitude) const
+	{
+		int mX = x + direction.direction().first * magnitude;
+		int mY = y + direction.direction().second * magnitude;
 
-    if (mY < 0 || mY >= m_height || mX < 0 || mX >= m_width) throw std::out_of_range("Out of bounds");
+		if (mY < 0 || mY >= m_height || mX < 0 || mX >= m_width) throw std::out_of_range("Out of bounds");
 
-    return m_grid[mY][mX];
-  }
+		return m_grid[mY][mX];
+	}
+
+	template <typename T>
+	bool Grid<T>::inBounds(int x, int y) const
+	{
+		return x >= 0 && x < m_width && y >= 0 && y < m_height;
+	}
 
 	template <typename T>
 	int Grid<T>::width() const
