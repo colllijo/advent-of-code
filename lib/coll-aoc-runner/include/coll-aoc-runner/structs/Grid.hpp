@@ -8,6 +8,7 @@
 
 #include "coll-aoc-runner/strings/Format.hpp"
 #include "coll-aoc-runner/structs/Direction.hpp"
+#include "coll-aoc-runner/structs/Vector2.hpp"
 
 namespace caoc::structs
 {
@@ -25,10 +26,14 @@ namespace caoc::structs
 		int height() const;
 
 		void set(int x, int y, T value);
+		void set(Vector2<int> pos, T value);
 		T get(int x, int y) const;
+		T get(Vector2<int> pos) const;
 		T move(int x, int y, Direction direction, int magnitude = 1) const;
+		T move(Vector2<int> pos, Direction direction, int magnitude = 1) const;
 
 		bool inBounds(int x, int y) const;
+		bool inBounds(Vector2<int> pos) const;
 
 		std::vector<T> row(int y) const;
 		std::vector<std::vector<T>> rows() const;
@@ -92,6 +97,12 @@ namespace caoc::structs
 	}
 
 	template <typename T>
+	void Grid<T>::set(Vector2<int> pos, T value)
+	{
+		set(pos.x(), pos.y(), value);
+	}
+
+	template <typename T>
 	T Grid<T>::get(int x, int y) const
 	{
 		if (y < 0 || y >= m_height || x < 0 || x >= m_width) throw std::out_of_range("Out of bounds");
@@ -100,10 +111,18 @@ namespace caoc::structs
 	}
 
 	template <typename T>
+	T Grid<T>::get(Vector2<int> pos) const
+	{
+		return get(pos.x(), pos.y());
+	}
+
+	template <typename T>
 	T Grid<T>::move(int x, int y, Direction direction, int magnitude) const
 	{
-		int mX = x + direction.direction().first * magnitude;
-		int mY = y + direction.direction().second * magnitude;
+		auto scaled = direction.direction() * magnitude;
+
+		int mX = x + scaled.x();
+		int mY = y + scaled.y();
 
 		if (mY < 0 || mY >= m_height || mX < 0 || mX >= m_width) throw std::out_of_range("Out of bounds");
 
@@ -111,9 +130,21 @@ namespace caoc::structs
 	}
 
 	template <typename T>
+	T Grid<T>::move(Vector2<int> pos, Direction direction, int magnitude) const
+	{
+		return move(pos.x(), pos.y(), direction, magnitude);
+	}
+
+	template <typename T>
 	bool Grid<T>::inBounds(int x, int y) const
 	{
 		return x >= 0 && x < m_width && y >= 0 && y < m_height;
+	}
+
+	template <typename T>
+	bool Grid<T>::inBounds(Vector2<int> pos) const
+	{
+		return inBounds(pos.x(), pos.y());
 	}
 
 	template <typename T>

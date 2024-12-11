@@ -37,6 +37,7 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/strings/Format.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Grid.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Direction.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Vector2.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/crypto/MD5.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/parallelism/ThreadPool.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/cache/AoCCache.hpp"
