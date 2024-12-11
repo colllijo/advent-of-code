@@ -2,11 +2,13 @@
 
 #include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "coll-aoc-runner/structs/Direction.hpp"
 #include "coll-aoc-runner/structs/Grid.hpp"
+#include "coll-aoc-runner/structs/Vector2.hpp"
+
+using namespace caoc::structs;
 
 Day10_2024::Day10_2024()
 {
@@ -30,8 +32,8 @@ const vector<caoc::structs::Direction> dirs = {
 
 string Day10_2024::part1(const string& input, bool example)
 {
-	caoc::structs::Grid<int> grid(input, [](char c) { return c - '0'; });
-	vector<pair<int, int>> pos;
+	Grid<int> grid(input, [](char c) { return c - '0'; });
+	vector<Vector2<int>> pos;
 
 	for (int y = 0; y < grid.height(); y++)
 	{
@@ -46,21 +48,20 @@ string Day10_2024::part1(const string& input, bool example)
 	long long sum = 0;
 	for (const auto& p : pos)
 	{
-		set<pair<int, int>> paths {p};
+		set<Vector2<int>> paths{p};
 
 		int step = 1;
 		while (step <= 9)
 		{
-			set<pair<int, int>> newPaths;
-			for (const auto& [x, y] : paths)
+			set<Vector2<int>> newPaths;
+			for (const auto& path : paths)
 			{
 				for (const auto& dir : dirs)
 				{
-					int nx = x + dir.direction().first;
-					int ny = y + dir.direction().second;
-					if (grid.inBounds(nx, ny) && grid.get(nx, ny) == step)
+					auto newPath = path + dir.direction();
+					if (grid.inBounds(newPath) && grid.get(newPath) == step)
 					{
-						newPaths.insert({nx, ny});
+						newPaths.insert(newPath);
 					}
 				}
 			}
@@ -78,7 +79,7 @@ string Day10_2024::part1(const string& input, bool example)
 string Day10_2024::part2(const string& input, bool example)
 {
 	caoc::structs::Grid<int> grid(input, [](char c) { return c - '0'; });
-	vector<pair<int, int>> pos;
+	vector<Vector2<int>> pos;
 
 	for (int y = 0; y < grid.height(); y++)
 	{
@@ -90,24 +91,25 @@ string Day10_2024::part2(const string& input, bool example)
 			}
 		}
 	}
+
 	long long sum = 0;
 	for (const auto& p : pos)
 	{
-		vector<pair<int, int>> paths {p};
+		vector<Vector2<int>> paths{p};
 
 		int step = 1;
 		while (step <= 9)
 		{
-			vector<pair<int, int>> newPaths;
-			for (const auto& [x, y] : paths)
+			vector<Vector2<int>> newPaths;
+			for (const auto& path : paths)
 			{
 				for (const auto& dir : dirs)
 				{
-					int nx = x + dir.direction().first;
-					int ny = y + dir.direction().second;
-					if (grid.inBounds(nx, ny) && grid.get(nx, ny) == step)
+					auto newPath = path + dir.direction();
+
+					if (grid.inBounds(newPath) && grid.get(newPath) == step)
 					{
-						newPaths.push_back({nx, ny});
+						newPaths.push_back(newPath);
 					}
 				}
 			}
