@@ -5,8 +5,9 @@
 #include <cstdlib>
 #include <cwchar>
 #include <fstream>
+#include <iterator>
 
-AoCInput::AoCInput(const std::shared_ptr<AoCCookie>& aocCookie): cookie(aocCookie)
+AoCInput::AoCInput(const std::shared_ptr<AoCCookie> &aocCookie) : cookie(aocCookie)
 {
 	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
 	char *root = getenv("CAOC_ROOT_DIR");
@@ -87,4 +88,12 @@ void AoCInput::downloadInput(int year, int day)
 	// Cleanup
 	fclose(fp);
 	curl_easy_cleanup(curl);
+
+	// Check for bad input
+	std::ifstream inputFile(filename);
+	std::string input((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
+	inputFile.close();
+
+	if (input.ends_with('\n')) input.pop_back();
+	if (input.empty() || input.starts_with("Please don't repeatedly request this endpoint before it unlocks")) std::filesystem::remove(filename);
 }
