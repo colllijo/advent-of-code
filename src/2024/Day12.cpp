@@ -209,7 +209,6 @@ string Day12_2024::part2(const string& input, bool example)
 				sides += left + right;
 			}
 
-			printf("Region %c: %d area, %d sides\n", region, area, sides);
 			sum += area * sides;
 		}
 	}
