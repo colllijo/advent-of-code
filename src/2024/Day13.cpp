@@ -1,7 +1,6 @@
 #include "2024/Day13.hpp"
 
 #include <algorithm>
-#include <ranges>
 #include <vector>
 
 #include "coll-aoc-runner/strings/Format.hpp"
@@ -38,39 +37,16 @@ string Day13_2024::part1(const string& input, bool example)
 		auto lines = strings::split(machine, "\n");
 
 		Vector2<long long> a, b, prize;
-		a = {stoi(lines[0].substr(12, lines[0].find(" ", 13))), stoi(lines[0].substr(lines[0].find("Y") + 2))};
-		b = {stoi(lines[1].substr(12, lines[1].find(" ", 13))), stoi(lines[1].substr(lines[1].find("Y") + 2))};
-		prize = {stoi(lines[2].substr(9, lines[2].find(" ", 9))), stoi(lines[2].substr(lines[2].find("Y") + 2))};
+		a = {stoll(lines[0].substr(12, lines[0].find(" ", 13))), stoll(lines[0].substr(lines[0].find("Y") + 2))};
+		b = {stoll(lines[1].substr(12, lines[1].find(" ", 13))), stoll(lines[1].substr(lines[1].find("Y") + 2))};
+		prize = {stoll(lines[2].substr(9, lines[2].find(" ", 9))), stoll(lines[2].substr(lines[2].find("Y") + 2))};
 
-		vector<long long> tokens;
-		for (int i = 0; i < 100; i++)
-		{
-			Vector2<long long> movedA = a * i;
-			Vector2<long long> movedB = b * i;
-			Vector2<long long> remainingA = prize - movedA;
-			Vector2<long long> remainingB = prize - movedB;
 
-			if (remainingA.x() % b.x() == 0 && remainingA.y() % b.y() == 0)
-			{
-				if (a * i + b * (remainingA.x() / b.x()) == prize)
-				{
-					tokens.push_back(i * 3 + remainingA.x() / b.x());
-				}
-			}
-			if (remainingB.x() % a.x() == 0 && remainingB.y() % a.y() == 0)
-			{
-				if (b * i + a * (remainingB.x() / a.x()) == prize)
-				{
-					tokens.push_back(i + remainingB.x() / a.x() * 3);
-				}
-			}
-		}
+    long long aPresses = (prize.y() * a.x() - prize.x() * a.y()) / (b.y() * a.x() - a.y() * b.x());
+    long long bPresses = (prize.x() - b.x() * aPresses) / a.x();
 
-		if (!tokens.empty())
-		{
-			sort(tokens.begin(), tokens.end());
-			sum += tokens[0];
-		}
+    if (a * bPresses + b * aPresses == prize)
+      sum += bPresses * 3 + aPresses;
 	}
 
 	return to_string(sum);
@@ -86,15 +62,17 @@ string Day13_2024::part2(const string& input, bool example)
 		long long offset = 10000000000000LL;
 
 		Vector2<long long> a, b, prize;
-		a = {stoi(lines[0].substr(12, lines[0].find(" ", 13))), stoi(lines[0].substr(lines[0].find("Y") + 2))};
-		b = {stoi(lines[1].substr(12, lines[1].find(" ", 13))), stoi(lines[1].substr(lines[1].find("Y") + 2))};
-		prize = {stoi(lines[2].substr(9, lines[2].find(" ", 9))), stoi(lines[2].substr(lines[2].find("Y") + 2))};
+		a = {stoll(lines[0].substr(12, lines[0].find(" ", 13))), stoll(lines[0].substr(lines[0].find("Y") + 2))};
+		b = {stoll(lines[1].substr(12, lines[1].find(" ", 13))), stoll(lines[1].substr(lines[1].find("Y") + 2))};
+		prize = {stoll(lines[2].substr(9, lines[2].find(" ", 9))), stoll(lines[2].substr(lines[2].find("Y") + 2))};
 		prize.setX(prize.x() + offset);
 		prize.setY(prize.y() + offset);
 
-		// TODO: Create a line class, translate the Problem into two lines and calculate their intersection point.
-		// Works on geogebra (y1 = 3x + ((Px-x*Ax)/(Bx)))
-		//                   (y2 = 3x + ((Py-x*Ay)/(By)))
+    long long aPresses = (prize.y() * a.x() - prize.x() * a.y()) / (b.y() * a.x() - a.y() * b.x());
+    long long bPresses = (prize.x() - b.x() * aPresses) / a.x();
+
+    if (a * bPresses + b * aPresses == prize)
+      sum += bPresses * 3 + aPresses;
 	}
 
 	return to_string(sum);
