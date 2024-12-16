@@ -1,11 +1,10 @@
 #include "strings/Format.hpp"
 
 #include <ranges>
-#include <vector>
 
 namespace caoc::strings
 {
-	std::string trim(const std::string& str, const std::string whitespace)
+	std::string trim(const std::string& str, const std::string& whitespace)
 	{
 		const auto strBegin = str.find_first_not_of(whitespace);
 		const auto strEnd = str.find_last_not_of(whitespace);
@@ -14,7 +13,7 @@ namespace caoc::strings
 		return str.substr(strBegin, strEnd - strBegin + 1);
 	}
 
-	std::vector<std::string> split(const std::string& str, const std::string delimiter)
+	std::vector<std::string> split(const std::string& str, const std::string& delimiter)
 	{
 		std::vector<std::string> result;
 		auto split_view = str | std::views::split(delimiter);
@@ -26,4 +25,16 @@ namespace caoc::strings
 
 		return result;
 	}
+
+  std::vector<std::string> split(const std::string& str, const std::regex& delimiter)
+  {
+    std::vector<std::string> result;
+    std::sregex_token_iterator iter(str.begin(), str.end(), delimiter, -1);
+    std::sregex_token_iterator end;
+
+    while (iter != end)
+      result.push_back(*iter++);
+
+    return result;
+  }
 };  // namespace caoc::strings
