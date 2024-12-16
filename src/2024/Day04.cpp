@@ -6,6 +6,8 @@
 #include "coll-aoc-runner/structs/Direction.hpp"
 #include "coll-aoc-runner/structs/Grid.hpp"
 
+using namespace caoc::structs;
+
 Day04_2024::Day04_2024()
 {
 	exampleInput =
@@ -25,13 +27,13 @@ string Day04_2024::part1(const string& input, bool example)
 {
 	string search = "XMAS";
 	int count = 0;
-	caoc::structs::Grid<char> grid(input);
+	Grid<char> grid(input);
 
 	for (int y = 0; y < grid.height(); y++)
 	{
 		for (int x = 0; x < grid.width(); x++)
 		{
-			for (const auto& dir : caoc::structs::Directions)
+			for (const auto& dir : Directions)
 			{
 				try
 				{
@@ -57,12 +59,11 @@ string Day04_2024::part1(const string& input, bool example)
 string Day04_2024::part2(const string& input, bool example)
 {
 	long long count = 0;
-	caoc::structs::Grid<char> grid(input);
+	Grid<char> grid(input);
 
 	auto crossCount = [&grid](int x, int y)
 	{
-		using caoc::structs::Direction;
-		std::vector<Direction> diagonals = {Direction::NORTH_EAST, Direction::SOUTH_EAST, Direction::SOUTH_WEST, Direction::NORTH_WEST};
+		vector<Direction> diagonals = {Direction::NORTH_EAST, Direction::SOUTH_EAST, Direction::SOUTH_WEST, Direction::NORTH_WEST};
 
 		return accumulate(diagonals.begin(), diagonals.end(), 0,
 		                  [&grid, &x, &y](int acc, Direction dir) { return acc + (grid.move(x, y, dir, 1) == 'M' && grid.move(x, y, dir, -1) == 'S'); });

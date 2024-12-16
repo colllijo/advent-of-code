@@ -24,13 +24,6 @@ Day12_2024::Day12_2024()
 
 using namespace caoc::structs;
 
-const vector<caoc::structs::Direction> dirs = {
-    caoc::structs::Direction::NORTH,
-    caoc::structs::Direction::SOUTH,
-    caoc::structs::Direction::WEST,
-    caoc::structs::Direction::EAST,
-};
-
 string Day12_2024::part1(const string& input, bool example)
 {
 	Grid<char> grid(input);
@@ -57,7 +50,7 @@ string Day12_2024::part1(const string& input, bool example)
 				{
 					visited.insert(path);
 					area++;
-					for (const auto& dir : dirs)
+					for (const auto& dir : CardinalDirections)
 					{
 						auto newPath = path + dir.direction();
 						if (grid.inBounds(newPath) && grid.get(newPath) == region)
@@ -111,7 +104,7 @@ string Day12_2024::part2(const string& input, bool example)
 					patches.set(path, '#');
 					visited.insert(path);
 					area++;
-					for (const auto& dir : dirs)
+					for (const auto& dir : CardinalDirections)
 					{
 						auto newPath = path + dir.direction();
 						if (grid.inBounds(newPath) && grid.get(newPath) == region)

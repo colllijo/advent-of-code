@@ -23,13 +23,6 @@ Day10_2024::Day10_2024()
 	    "10456732";
 }
 
-const vector<caoc::structs::Direction> dirs = {
-    caoc::structs::Direction::NORTH,
-    caoc::structs::Direction::SOUTH,
-    caoc::structs::Direction::WEST,
-    caoc::structs::Direction::EAST,
-};
-
 string Day10_2024::part1(const string& input, bool example)
 {
 	Grid<int> grid(input, [](char c) { return c - '0'; });
@@ -56,7 +49,7 @@ string Day10_2024::part1(const string& input, bool example)
 			set<Vector2<int>> newPaths;
 			for (const auto& path : paths)
 			{
-				for (const auto& dir : dirs)
+				for (const auto& dir : CardinalDirections)
 				{
 					auto newPath = path + dir.direction();
 					if (grid.inBounds(newPath) && grid.get(newPath) == step)
@@ -103,7 +96,7 @@ string Day10_2024::part2(const string& input, bool example)
 			vector<Vector2<int>> newPaths;
 			for (const auto& path : paths)
 			{
-				for (const auto& dir : dirs)
+				for (const auto& dir : CardinalDirections)
 				{
 					auto newPath = path + dir.direction();
 

@@ -30,23 +30,6 @@ Day06_2024::Day06_2024()
 	    "......#...";
 }
 
-inline Direction turnRight(Direction dir)
-{
-	switch (dir)
-	{
-		case Direction::NORTH:
-			return Direction::EAST;
-		case Direction::EAST:
-			return Direction::SOUTH;
-		case Direction::SOUTH:
-			return Direction::WEST;
-		case Direction::WEST:
-			return Direction::NORTH;
-		default:
-			return dir;
-	}
-}
-
 string Day06_2024::part1(const string& input, bool example)
 {
 	unordered_set<Vector2<int>> visited{};
@@ -82,7 +65,7 @@ solve:
 			}
 
 			position += (dir.direction() * magnitude);
-			dir = turnRight(dir);
+      dir.rotateRight();
 		}
 	}
 	catch (const exception& e)
@@ -148,7 +131,7 @@ solve:
 								    int magnitudeCopy = 0;
 								    while (gridCopy.move(positionCopy, dirCopy, magnitudeCopy + 1) != '#') magnitudeCopy++;
 								    positionCopy += dirCopy.direction() * magnitudeCopy;
-								    dirCopy = turnRight(dirCopy);
+                    dirCopy.rotateRight();
 							    }
 						    }
 						    catch (const exception& e)
@@ -161,7 +144,7 @@ solve:
 			}
 
 			position += dir.direction() * magnitude;
-			dir = turnRight(dir);
+      dir.rotateRight();
 		}
 	}
 	catch (const exception& e)

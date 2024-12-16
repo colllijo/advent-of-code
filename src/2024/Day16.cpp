@@ -33,40 +33,6 @@ Day16_2024::Day16_2024()
 	    "###############";
 }
 
-inline Direction turnLeft(Direction dir)
-{
-	switch (dir)
-	{
-		case Direction::EAST:
-			return Direction::NORTH;
-		case Direction::NORTH:
-			return Direction::WEST;
-		case Direction::SOUTH:
-			return Direction::EAST;
-		case Direction::WEST:
-			return Direction::SOUTH;
-		default:
-			return dir;
-	}
-}
-
-inline Direction turnRight(Direction dir)
-{
-	switch (dir)
-	{
-		case Direction::NORTH:
-			return Direction::EAST;
-		case Direction::EAST:
-			return Direction::SOUTH;
-		case Direction::SOUTH:
-			return Direction::WEST;
-		case Direction::WEST:
-			return Direction::NORTH;
-		default:
-			return dir;
-	}
-}
-
 string Day16_2024::part1(const string& input, bool example)
 {
 	Grid<char> grid(input);
@@ -116,8 +82,8 @@ string Day16_2024::part1(const string& input, bool example)
 			{
 				advances.insert({position + dir.direction(), dir, cost + 1});
 			}
-			advances.insert({position, turnLeft(dir), cost + 1000});
-			advances.insert({position, turnRight(dir), cost + 1000});
+			advances.insert({position, Direction::rotateLeft(dir), cost + 1000});
+			advances.insert({position, Direction::rotateRight(dir), cost + 1000});
 		}
 
 		frontline = advances;
@@ -190,8 +156,8 @@ string Day16_2024::part2(const string& input, bool example)
 			{
 				advances.insert({position + dir.direction(), dir, cost + 1, pathCopy});
 			}
-			advances.insert({position, turnLeft(dir), cost + 1000, pathCopy});
-			advances.insert({position, turnRight(dir), cost + 1000, pathCopy});
+			advances.insert({position, Direction::rotateLeft(dir), cost + 1000, pathCopy});
+			advances.insert({position, Direction::rotateRight(dir), cost + 1000, pathCopy});
 		}
 
 		frontline = advances;
