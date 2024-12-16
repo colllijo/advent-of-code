@@ -2,8 +2,6 @@
 
 #include <coll-aoc-runner/AoCDay.hpp>
 
-using namespace std;
-
 class Day_: public AoCDay {
 public:
 	Day_();
