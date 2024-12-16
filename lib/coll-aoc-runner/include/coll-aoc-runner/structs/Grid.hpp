@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iostream>
 #include <ranges>
 #include <string>
 #include <vector>
@@ -42,6 +43,8 @@ namespace caoc::structs
 		std::vector<std::vector<T>> dexterDiagonals() const;
 		std::vector<std::vector<T>> sinisterDiagonals() const;
 		std::vector<std::vector<T>> diagonals() const;
+
+    void print() const;
 
 		T& operator()(int x, int y);
 		const T& operator()(int x, int y) const;
@@ -252,6 +255,19 @@ namespace caoc::structs
 
 		return diagonals;
 	}
+
+  template <typename T>
+  void Grid<T>::print() const
+  {
+    for (const auto& row : m_grid)
+    {
+      for (const auto& cell : row)
+      {
+        std::cout << cell;
+      }
+      std::cout << "\n";
+    }
+  }
 
 	template <typename T>
 	T& Grid<T>::operator()(int x, int y)
