@@ -1,84 +1,70 @@
 #include "2024/Day01.hpp"
 
 #include <algorithm>
-#include <sstream>
-#include <unordered_map>
-#include <vector>
+#include <ranges>
 
-Day01_2024::Day01_2024(){exampleInput =
-                             "3   4\n"
-                             "4   3\n"
-                             "2   5\n"
-                             "1   3\n"
-                             "3   9\n"
-                             "3   3";
-
+Day01_2024::Day01_2024()
+{
+	exampleInput =
+	    "3   4\n"
+	    "4   3\n"
+	    "2   5\n"
+	    "1   3\n"
+	    "3   9\n"
+	    "3   3";
 }
 
 string Day01_2024::part1(const string& input, bool example)
 {
-	int sum = 0;
+	auto leftView = strings::split(input, "\n")
+    | ranges::views::transform([](const auto& line) { return strings::split(line, regex("\\s+"))[0]; })
+    | ranges::views::transform([](const auto& str) { return stoi(str); });
 
-	vector<int> left;
-	vector<int> right;
+	auto rightView = strings::split(input, "\n")
+	   | ranges::views::transform([](const auto& line) { return strings::split(line, regex("\\s+"))[1]; })
+	   | ranges::views::transform([](const auto& str) { return stoi(str); });
 
-	stringstream stream(input);
-	string line;
-	while (getline(stream, line))
-	{
-		stringstream lineStream(line);
-		string leftStr;
-		string rightStr;
+	vector<int> left(leftView.begin(), leftView.end());
+	vector<int> right(rightView.begin(), rightView.end());
 
-		lineStream >> leftStr >> rightStr;
+  ranges::sort(left);
+  ranges::sort(right);
 
-		left.push_back(stoi(leftStr));
-		right.push_back(stoi(rightStr));
-	}
-
-	sort(left.begin(), left.end());
-	sort(right.begin(), right.end());
-
-	for (int i = 0; i < left.size(); i++)
-	{
-		sum += abs(left[i] - right[i]);
-	}
-
-	return to_string(sum);
+  return to_string(ranges::fold_left(
+    ranges::views::zip_transform([](int left, int right){ return abs(left - right); }, left, right),
+    0,
+    plus<>()
+  ));
 }
 
-string Day01_2024::part2(const string& input, bool example) {
-	int sum = 0;
+string Day01_2024::part2(const string& input, bool example)
+{
+	auto leftView = strings::split(input, "\n")
+    | ranges::views::transform([](const auto& line) { return strings::split(line, regex("\\s+"))[0]; })
+    | ranges::views::transform([](const auto& str) { return stoi(str); });
 
-	vector<int> left;
-	unordered_map<int, int> right;
+	auto rightView = strings::split(input, "\n")
+    | ranges::views::transform([](const auto& line) { return strings::split(line, regex("\\s+"))[1]; })
+    | ranges::views::transform([](const auto& str) { return stoi(str); });
 
-	stringstream stream(input);
-	string line;
-	while (getline(stream, line))
-	{
-		stringstream lineStream(line);
-		string leftStr;
-		string rightStr;
+  auto freqMap = ranges::fold_left(
+    rightView,
+    unordered_map<int, int>(),
+    [](auto acc, int val) {
+      if (!acc.count(val))
+        acc[val] = 1;
+      else
+        acc[val]++;
 
-		lineStream >> leftStr >> rightStr;
+      return acc;
+    }
+  );
 
-		left.push_back(stoi(leftStr));
-		if (!right.count(stoi(rightStr)))
-		{
-			right[stoi(rightStr)] = 1;
-		}
-		else {
-			right[stoi(rightStr)]++;
-		}
-	}
+	vector<int> left(leftView.begin(), leftView.end());
 
-	sort(left.begin(), left.end());
-
-	for (int i = 0; i < left.size(); i++)
-	{
-		sum += left[i] * right[left[i]];
-	}
-
-	return to_string(sum);
+  return to_string(ranges::fold_left(
+    left,
+    0,
+    [&freqMap](int acc, int val){ return acc + (val * freqMap[val]); }
+  ));
 }
