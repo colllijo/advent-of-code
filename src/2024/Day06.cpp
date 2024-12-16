@@ -30,7 +30,7 @@ Day06_2024::Day06_2024()
 	    "......#...";
 }
 
-Direction turnRight(Direction dir)
+inline Direction turnRight(Direction dir)
 {
 	switch (dir)
 	{
