@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+
 #include "coll-aoc-runner/structs/Vector2.hpp"
 
 namespace caoc::structs
@@ -10,14 +11,14 @@ namespace caoc::structs
 	public:
 		enum Value
 		{
-			NORTH_WEST = -9,
-			NORTH = -8,
-			NORTH_EAST = -7,
-			WEST = -1,
-			EAST = 1,
-			SOUTH_WEST = 7,
-			SOUTH = 8,
-			SOUTH_EAST = 9
+			NORTH_WEST,
+			NORTH,
+			NORTH_EAST,
+      EAST,
+      SOUTH_EAST,
+      SOUTH,
+			SOUTH_WEST,
+      WEST
 		};
 
 		Direction() = default;
@@ -25,15 +26,22 @@ namespace caoc::structs
 
 		Vector2<int> direction() const;
 
+    Direction& rotateLeft(int times = 2);
+    Direction& rotateRight(int times = 2);
+
 		explicit operator bool() const = delete;
 		constexpr operator Value() const { return m_value; }
 		constexpr bool operator==(Direction other) const { return m_value == other.m_value; }
 		constexpr bool operator!=(Direction other) const { return m_value != other.m_value; }
 
+    static Direction rotateLeft(const Direction& dir, int times = 2);
+    static Direction rotateRight(const Direction& dir, int times = 2);
+
 	private:
 		Value m_value;
 	};
 
+	constexpr std::array<Direction, 4> CardinalDirections = {Direction(Direction::NORTH), Direction(Direction::WEST), Direction(Direction::EAST), Direction(Direction::SOUTH)};
 	constexpr std::array<Direction, 8> Directions = {Direction(Direction::NORTH_WEST), Direction(Direction::NORTH),     Direction(Direction::NORTH_EAST),
 	                                                 Direction(Direction::WEST),       Direction(Direction::EAST),      Direction(Direction::SOUTH_WEST),
 	                                                 Direction(Direction::SOUTH),      Direction(Direction::SOUTH_EAST)};

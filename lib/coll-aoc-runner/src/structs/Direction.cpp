@@ -4,6 +4,40 @@
 
 namespace caoc::structs
 {
+	Direction& Direction::rotateLeft(int times)
+	{
+		times %= 8;
+
+		m_value = static_cast<Value>((m_value + 8 - times) % 8);
+
+		return *this;
+	}
+
+	Direction& Direction::rotateRight(int times)
+	{
+		times %= 8;
+
+		m_value = static_cast<Value>((m_value + times) % 8);
+
+		return *this;
+	}
+
+  Direction Direction::rotateLeft(const Direction& dir, int times)
+  {
+    auto newDir = dir;
+    newDir.rotateLeft(times);
+
+    return newDir;
+  }
+
+  Direction Direction::rotateRight(const Direction& dir, int times)
+  {
+    auto newDir = dir;
+    newDir.rotateRight(times);
+
+    return newDir;
+  }
+
 	Vector2<int> Direction::direction() const
 	{
 		switch (m_value)
