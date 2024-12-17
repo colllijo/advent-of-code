@@ -164,20 +164,6 @@ string Day15_2024::part2(const string& input, bool example)
 		}
 	}
 
-	if (example)
-	{
-		printf("Initial position\n");
-		for (const auto& row : grid.rows())
-		{
-			for (const auto& cell : row)
-			{
-				printf("%c", cell);
-			}
-			printf("\n");
-		}
-		printf("\n");
-	}
-
 	int moveCount = 1;
 	Direction dir;
 	for (const char& move : moves)
