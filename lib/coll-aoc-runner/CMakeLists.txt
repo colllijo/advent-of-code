@@ -34,6 +34,7 @@ set(HEADER
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCStructs.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCIO.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/AoCCookie.hpp"
+  "${INCLUDE_DIR}/${LIBRARY_NAME}/algorithms/Dijkstras.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/strings/Format.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Grid.hpp"
   "${INCLUDE_DIR}/${LIBRARY_NAME}/structs/Direction.hpp"
