@@ -3,7 +3,8 @@
 #include <bits/ranges_algo.h>
 
 #include <functional>
-#include <queue>
+
+#include "coll-aoc-runner/algorithms/Dijkstras.hpp"
 
 Day18_2024::Day18_2024()
 {
@@ -38,7 +39,6 @@ Day18_2024::Day18_2024()
 string Day18_2024::part1(const string& input, bool example)
 {
 	int size = example ? 7 : 71;
-
 	Grid<char> grid(size, size, '.');
 
 	vector<Vector2<int>> corruptions;
@@ -50,52 +50,22 @@ string Day18_2024::part1(const string& input, bool example)
 	Vector2<int> start{0, 0};
 	Vector2<int> end{size - 1, size - 1};
 
-	using Node = tuple<uint64_t, Vector2<int>>;
-	priority_queue<Node, vector<Node>, greater<Node>> queue;
+  auto [dist, _] = algorithms::findBestPath<Vector2<int>>(start, end, [&grid](const Vector2<int>& pos) -> vector<tuple<double, Vector2<int>>>
+  {
+    vector<tuple<double, Vector2<int>>> neighbors;
 
-	map<Vector2<int>, u_int64_t> dist;
-	map<Vector2<int>, optional<Vector2<int>>> prev;
+    for (const auto& dir : CardinalDirections)
+    {
+      if (grid.inBounds(pos + dir.direction()) && grid.move(pos, dir) != '#')
+      {
+        neighbors.push_back({1, pos + dir.direction()});
+      }
+    }
 
-	dist[start] = 0;
-	prev[start] = nullopt;
+    return neighbors;
+  });
 
-	queue.push({0, start});
-
-	for (int y = 0; y < grid.height(); y++)
-	{
-		for (int x = 0; x < grid.width(); x++)
-		{
-			if (grid.get(x, y) != '#' && start != Vector2<int>{x, y})
-			{
-				dist[{x, y}] = UINT64_MAX;
-				prev[{x, y}] = nullopt;
-				queue.push({UINT64_MAX, {x, y}});
-			}
-		}
-	}
-
-	while (!queue.empty())
-	{
-		auto [cost, pos] = queue.top();
-		queue.pop();
-
-		if (pos == end) return to_string(cost);
-
-		for (const auto& dir : CardinalDirections)
-		{
-			if (grid.inBounds(pos + dir.direction()) && grid.move(pos, dir) != '#')
-			{
-				if (cost + 1 < dist[pos + dir.direction()])
-				{
-					prev[pos + dir.direction()] = pos;
-					dist[pos + dir.direction()] = cost + 1;
-					queue.push({cost + 1, pos + dir.direction()});
-				}
-			}
-		}
-	}
-
-	return "TODO: Solve part 1.";
+	return to_string(static_cast<int>(dist[end]));
 }
 
 string Day18_2024::part2(const string& input, bool example)
@@ -116,56 +86,8 @@ string Day18_2024::part2(const string& input, bool example)
 		grid.set(cor, '#');
 	}
 
-	auto isPossible = [&size](const Grid<char>& grid) -> bool
-	{
-		Vector2<int> start{0, 0};
-		Vector2<int> end{size - 1, size - 1};
-
-		using Node = tuple<uint64_t, Vector2<int>>;
-		priority_queue<Node, vector<Node>, greater<Node>> queue;
-
-		map<Vector2<int>, u_int64_t> dist;
-		map<Vector2<int>, optional<Vector2<int>>> prev;
-
-		dist[start] = 0;
-		prev[start] = nullopt;
-
-		queue.push({0, start});
-
-		for (int y = 0; y < grid.height(); y++)
-		{
-			for (int x = 0; x < grid.width(); x++)
-			{
-				if (grid.get(x, y) != '#' && start != Vector2<int>{x, y})
-				{
-					dist[{x, y}] = UINT64_MAX;
-					prev[{x, y}] = nullopt;
-					queue.push({UINT64_MAX, {x, y}});
-				}
-			}
-		}
-
-		while (!queue.empty())
-		{
-			auto [cost, pos] = queue.top();
-			queue.pop();
-
-			for (const auto& dir : CardinalDirections)
-			{
-				if (grid.inBounds(pos + dir.direction()) && grid.move(pos, dir) != '#')
-				{
-					if (cost + 1 > cost && cost + 1 < dist[pos + dir.direction()])
-					{
-						prev[pos + dir.direction()] = pos;
-						dist[pos + dir.direction()] = cost + 1;
-						queue.push({cost + 1, pos + dir.direction()});
-					}
-				}
-			}
-		}
-
-		return dist[end] != UINT64_MAX;
-	};
+  Vector2<int> start{0, 0};
+  Vector2<int> end{size - 1, size - 1};
 
 	auto getGrid = [&grid](const vector<Vector2<int>>& data, int index)
 	{
@@ -176,7 +98,7 @@ string Day18_2024::part2(const string& input, bool example)
 		return modified;
 	};
 
-	auto binary_search = [&isPossible, &getGrid](const vector<Vector2<int>>& data)
+	auto binary_search = [&start, &end, &getGrid](const vector<Vector2<int>>& data)
 	{
 		int left = 0;
 		int right = data.size() - 1;
@@ -186,7 +108,24 @@ string Day18_2024::part2(const string& input, bool example)
 		{
 			int mid = left + (right - left) / 2;
 
-			if (isPossible(getGrid(data, mid)))
+      const auto grid = getGrid(data, mid);
+      auto [dist, _] = algorithms::findBestPath<Vector2<int>>(start, end, [&grid](const Vector2<int>& pos) -> vector<tuple<double, Vector2<int>>>
+      {
+        vector<tuple<double, Vector2<int>>> neighbors;
+
+        for (const auto& dir : CardinalDirections)
+        {
+          if (grid.inBounds(pos + dir.direction()) && grid.move(pos, dir) != '#')
+          {
+            neighbors.push_back({1, pos + dir.direction()});
+          }
+        }
+
+        return neighbors;
+      });
+
+
+			if (dist.contains(end))
 			{
 				left = mid + 1;
 			}

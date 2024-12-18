@@ -1,8 +1,11 @@
 #include "2024/Day16.hpp"
 
+#include <algorithm>
 #include <climits>
 #include <functional>
-#include <queue>
+
+#include "coll-aoc-runner/algorithms/Dijkstras.hpp"
+#include "coll-aoc-runner/structs/Direction.hpp"
 
 Day16_2024::Day16_2024()
 {
@@ -47,68 +50,26 @@ string Day16_2024::part1(const string& input, bool example)
 		}
 	}
 
-	using Pos = tuple<Vector2<int>, Direction>;
-	using Node = tuple<uint64_t, Vector2<int>, Direction>;
-	priority_queue<Node, vector<Node>, greater<Node>> queue;
+  auto [dist, _] = algorithms::findBestPath<tuple<Vector2<int>, Direction>>({start, startDir}, [&grid](const tuple<Vector2<int>, Direction>& pos) -> vector<tuple<double, tuple<Vector2<int>, Direction>>>
+  {
+    vector<tuple<double, tuple<Vector2<int>, Direction>>> neighbors;
 
-	map<Pos, u_int64_t> dist;
-	map<Pos, optional<Pos>> prev;
+  if (grid.move(get<0>(pos), get<1>(pos)) != '#')
+  {
+      neighbors.push_back({1, {get<0>(pos) + get<1>(pos).direction(), get<1>(pos)}});
+  }
 
-	dist[{start, startDir}] = 0;
-	prev[{start, startDir}] = nullopt;
+    neighbors.push_back({1000, {get<0>(pos), Direction::rotateLeft(get<1>(pos))}});
+    neighbors.push_back({1000, {get<0>(pos), Direction::rotateRight(get<1>(pos))}});
 
-	queue.push({0, start, startDir});
+    return neighbors;
+  });
 
-	for (int y = 0; y < grid.height(); y++)
-	{
-		for (int x = 0; x < grid.width(); x++)
-		{
-			if (grid.get(x, y) != '#' && start != Vector2<int>{x, y})
-			{
-				for (const auto& dir : CardinalDirections)
-				{
-					dist[{{x, y}, dir}] = UINT64_MAX;
-					prev[{{x, y}, dir}] = nullopt;
-					queue.push({UINT64_MAX, {x, y}, dir});
-				}
-			}
-		}
-	}
+  int minDist = INT_MAX;
+  for (const auto& dir : CardinalDirections)
+    minDist = min(minDist, static_cast<int>(dist[{end, dir}]));
 
-	while (!queue.empty())
-	{
-		auto [cost, pos, dir] = queue.top();
-		queue.pop();
-
-		if (pos == end)
-			return to_string(cost);
-
-		if (grid.move(pos, dir) != '#')
-		{
-			if (cost + 1 < dist[{pos + dir.direction(), dir}])
-			{
-				prev[{pos + dir.direction(), dir}] = {pos, dir};
-				dist[{pos + dir.direction(), dir}] = cost + 1;
-				queue.push({cost + 1, pos + dir.direction(), dir});
-			}
-		}
-
-		if (cost + 1000 < dist[{pos, Direction::rotateLeft(dir)}])
-		{
-			prev[{pos, Direction::rotateLeft(dir)}] = {pos, dir};
-			dist[{pos, Direction::rotateLeft(dir)}] = cost + 1000;
-			queue.push({cost + 1000, pos, Direction::rotateLeft(dir)});
-		}
-
-		if (cost + 1000 < dist[{pos, Direction::rotateRight(dir)}])
-		{
-			prev[{pos, Direction::rotateRight(dir)}] = {pos, dir};
-			dist[{pos, Direction::rotateRight(dir)}] = cost + 1000;
-			queue.push({cost + 1000, pos, Direction::rotateRight(dir)});
-		}
-	}
-
-	return "End was not found";
+  return to_string(minDist);
 }
 
 string Day16_2024::part2(const string& input, bool example)
@@ -134,89 +95,38 @@ string Day16_2024::part2(const string& input, bool example)
 		}
 	}
 
-	using Pos = tuple<Vector2<int>, Direction>;
-	using Node = tuple<uint64_t, Vector2<int>, Direction>;
-	priority_queue<Node, vector<Node>, greater<Node>> queue;
+  auto [dist, prev] = algorithms::findBestPaths<tuple<Vector2<int>, Direction>>({start, startDir}, [&grid](const tuple<Vector2<int>, Direction>& pos) -> vector<tuple<double, tuple<Vector2<int>, Direction>>>
+  {
+    vector<tuple<double, tuple<Vector2<int>, Direction>>> neighbors;
 
-	map<Pos, u_int64_t> dist;
-	map<Pos, vector<Pos>> prev;
+  if (grid.move(get<0>(pos), get<1>(pos)) != '#')
+  {
+      neighbors.push_back({1, {get<0>(pos) + get<1>(pos).direction(), get<1>(pos)}});
+  }
 
-	dist[{start, startDir}] = 0;
-	prev[{start, startDir}] = {};
+    neighbors.push_back({1000, {get<0>(pos), Direction::rotateLeft(get<1>(pos))}});
+    neighbors.push_back({1000, {get<0>(pos), Direction::rotateRight(get<1>(pos))}});
 
-	queue.push({0, start, startDir});
+    return neighbors;
+  });
 
-	for (int y = 0; y < grid.height(); y++)
-	{
-		for (int x = 0; x < grid.width(); x++)
-		{
-			if (grid.get(x, y) != '#' && start != Vector2<int>{x, y})
-			{
-				for (const auto& dir : CardinalDirections)
-				{
-					dist[{{x, y}, dir}] = UINT64_MAX;
-					prev[{{x, y}, dir}] = {};
-					queue.push({UINT64_MAX, {x, y}, dir});
-				}
-			}
-		}
-	}
+  Direction endDir;
+  int minDist = INT_MAX;
+  for (const auto& dir : CardinalDirections)
+  {
+    if (static_cast<int>(dist[{end, dir}]) < minDist)
+    {
+      minDist = static_cast<int>(dist[{end, dir}]);
+      endDir = dir;
+    }
+  }
 
-	Pos finalPos;
-	while (!queue.empty())
-	{
-		auto [cost, pos, dir] = queue.top();
-		queue.pop();
-
-		if (pos == end)
-		{
-			finalPos = {pos, dir};
-			break;
-		}
-
-		if (grid.move(pos, dir) != '#')
-		{
-			if (cost + 1 > cost && cost + 1 < dist[{pos + dir.direction(), dir}])
-			{
-				prev[{pos + dir.direction(), dir}] = {{pos, dir}};
-				dist[{pos + dir.direction(), dir}] = cost + 1;
-				queue.push({cost + 1, pos + dir.direction(), dir});
-			}
-			else if (cost + 1 > cost && cost + 1 == dist[{pos + dir.direction(), dir}])
-			{
-				prev[{pos + dir.direction(), dir}].push_back({pos, dir});
-			}
-		}
-
-		if (cost + 1000 > cost && cost + 1000 < dist[{pos, Direction::rotateLeft(dir)}])
-		{
-			prev[{pos, Direction::rotateLeft(dir)}] = {{pos, dir}};
-			dist[{pos, Direction::rotateLeft(dir)}] = cost + 1000;
-			queue.push({cost + 1000, pos, Direction::rotateLeft(dir)});
-		}
-		else if (cost + 1000 > cost && cost + 1000 == dist[{pos, Direction::rotateLeft(dir)}])
-		{
-			prev[{pos, Direction::rotateLeft(dir)}].push_back({pos, dir});
-		}
-
-		if (cost + 1000 > cost && cost + 1000 < dist[{pos, Direction::rotateRight(dir)}])
-		{
-			prev[{pos, Direction::rotateRight(dir)}] = {{pos, dir}};
-			dist[{pos, Direction::rotateRight(dir)}] = cost + 1000;
-			queue.push({cost + 1000, pos, Direction::rotateRight(dir)});
-		}
-		else if (cost + 1000 > cost && cost + 1000 == dist[{pos, Direction::rotateRight(dir)}])
-		{
-			prev[{pos, Direction::rotateRight(dir)}].push_back({pos, dir});
-		}
-	}
-
-	set<Vector2<int>> visited{get<0>(finalPos)};
-	vector<Pos> path = prev[finalPos];
+	set<Vector2<int>> visited{end};
+	vector<tuple<Vector2<int>, Direction>> path = prev[{end, endDir}];
 
 	while(!path.empty())
 	{
-		vector<Pos> steps;
+    vector<tuple<Vector2<int>, Direction>> steps;
 
 		for (const auto& p : path)
 		{
