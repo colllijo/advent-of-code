@@ -2,12 +2,13 @@
 
 #include <getopt.h>
 
-#include <filesystem>
 #include <cstdlib>
 #include <cwchar>
+#include <filesystem>
 #include <string>
 
 #include "AoCDay.hpp"
+#include "AoCException.hpp"
 
 AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance())
 {
@@ -48,8 +49,15 @@ int AoCRunner::run(int argc, char *argv[])
 		{
 			if (selector.day != -1 && selector.day != day) continue;
 
-			if (selector.part != 2) runPart(aocDay, year, day, 1, runExamples);
-			if (selector.part != 1) runPart(aocDay, year, day, 2, runExamples);
+			try
+			{
+				if (selector.part != 2) runPart(aocDay, year, day, 1, runExamples);
+				if (selector.part != 1) runPart(aocDay, year, day, 2, runExamples);
+			}
+			catch (const AoCException &e)
+			{
+        aocIO.printError(e.what());
+			}
 		}
 	}
 

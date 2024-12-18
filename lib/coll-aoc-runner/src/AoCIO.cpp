@@ -95,6 +95,11 @@ void AoCIO::printSolveState(AoCSolveState state, bool cached)
 	}
 }
 
+void AoCIO::printError(const std::string& error)
+{
+  printf("\033[1;31m%s\033[0m\n", error.c_str());
+}
+
 char AoCIO::getChar()
 {
 	char buf = 0;

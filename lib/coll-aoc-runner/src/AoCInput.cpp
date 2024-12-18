@@ -6,6 +6,7 @@
 #include <cwchar>
 #include <fstream>
 #include <iterator>
+#include "AoCException.hpp"
 
 AoCInput::AoCInput(const std::shared_ptr<AoCCookie> &aocCookie) : cookie(aocCookie)
 {
@@ -40,17 +41,14 @@ std::string AoCInput::getInput(int year, int day)
 	}
 
 	if (inputFile && inputFile.is_open())
-	{
-		input = std::string((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
-		if (input.ends_with('\n')) input.pop_back();
-	}
+  {
+    input = std::string((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
+    if (input.ends_with('\n')) input.pop_back();
+  }
 	else
-	{
-		fprintf(stderr,
-		        "\033[31mError loading the input: Input file not found "
-		        "please try to manually create it.\033[0m\n");
-		exit(1);
-	}
+  {
+    throw AoCException("Error loading the input: Input file not found please try to manually create it.");
+  }
 
 	return input;
 }
@@ -67,8 +65,7 @@ void AoCInput::downloadInput(int year, int day)
 	FILE *fp = fopen(filename.c_str(), "wb");
 	if (!curl)
 	{
-		fprintf(stderr, "Could not initialize curl\n");
-		exit(1);
+    throw AoCException("Could not initialize curl");
 	}
 
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -79,10 +76,9 @@ void AoCInput::downloadInput(int year, int day)
 	CURLcode res = curl_easy_perform(curl);
 	if (res != CURLE_OK)
 	{
-		fprintf(stderr, "\033[31mFailed to download: %s\033[0m\n", curl_easy_strerror(res));
 		fclose(fp);
 		curl_easy_cleanup(curl);
-		exit(1);
+    throw AoCException("Failed to download the input file");
 	}
 
 	// Cleanup
@@ -96,4 +92,5 @@ void AoCInput::downloadInput(int year, int day)
 
 	if (input.ends_with('\n')) input.pop_back();
 	if (input.empty() || input.starts_with("Please don't repeatedly request this endpoint before it unlocks")) std::filesystem::remove(filename);
+  if (input.starts_with("Please don't repeatedly request this endpoint before it unlocks")) throw AoCException("Day has not yet unlocked.");
 }

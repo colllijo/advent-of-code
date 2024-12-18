@@ -1,6 +1,7 @@
 #include "AoCCookie.hpp"
 
 #include <filesystem>
+#include "AoCException.hpp"
 
 #include <curl/curl.h>
 
@@ -24,12 +25,7 @@ std::string AoCCookie::getSession()
 
 	char* cookie = getenv("CAOC_AUTH");
 	if (cookie == nullptr)
-	{
-		fprintf(stderr,
-		        "\033[31mAuthorisation cookie not set.\nPlease set the "
-		        "`CAOC_AUTH` environment variable.\033[0m\n");
-		exit(1);
-	}
+    throw AoCException("Authorisation cookie not set.\nPlease set the `CAOC_AUTH` environment variable.");
 
 	return std::string(cookie);
 }
@@ -98,9 +94,8 @@ bool AoCCookie::isValidSession(const std::string& session)
 	CURLcode res = curl_easy_perform(curl);
 	if (res != CURLE_OK)
 	{
-		fprintf(stderr, "\033[31mFailed to download: %s\033[0m\n", curl_easy_strerror(res));
 		curl_easy_cleanup(curl);
-		exit(1);
+    throw AoCException("Failed to download: " + std::string(curl_easy_strerror(res)));
 	}
 
 	// Cleanup

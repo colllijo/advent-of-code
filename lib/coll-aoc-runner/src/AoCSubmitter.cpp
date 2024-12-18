@@ -2,10 +2,10 @@
 
 #include <curl/curl.h>
 
-#include <format>
 #include <memory>
 #include <tuple>
 
+#include "AoCException.hpp"
 #include "AoCStructs.hpp"
 
 AoCSubmitter::AoCSubmitter(const std::shared_ptr<AoCCache> &aocCache, const std::shared_ptr<AoCCookie> &aocCookie) : cache(aocCache), cookie(aocCookie), aocIO(AoCIO::getInstance())
@@ -56,11 +56,8 @@ AoCSolveState AoCSubmitter::submitAnswer(int year, int day, int part, const std:
 
 	CURL *curl = curl_easy_init();
 	if (!curl)
-	{
-		fprintf(stderr, "Could not initialize curl\n");
-		exit(1);
-	}
-
+    throw AoCException("Could not initialize curl");
+	
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_COOKIE, ("session=" + cookie->getSession()).c_str());
 	curl_easy_setopt(curl, CURLOPT_POST, 1L);
@@ -72,9 +69,8 @@ AoCSolveState AoCSubmitter::submitAnswer(int year, int day, int part, const std:
 	CURLcode res = curl_easy_perform(curl);
 	if (res != CURLE_OK)
 	{
-		fprintf(stderr, "\033[31mFailed to submit: %s\033[0m\n", curl_easy_strerror(res));
 		curl_easy_cleanup(curl);
-		exit(1);
+    throw AoCException("Failed to submit answer");
 	}
 
 	// Cleanup

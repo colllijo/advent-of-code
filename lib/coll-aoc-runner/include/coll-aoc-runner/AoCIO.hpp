@@ -19,6 +19,8 @@ public:
 	void printFullPartResult(int year, int day, int part, const std::string& result, const std::string& exampleResult);
 	void printSolveState(AoCSolveState state, bool cached = false);
 
+  void printError(const std::string& error);
+
 private:
 	AoCIO() = default;
 	AoCIO(const AoCIO&) = delete;
