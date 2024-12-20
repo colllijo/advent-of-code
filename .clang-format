@@ -6,3 +6,4 @@ NamespaceIndentation: All
 BreakBeforeBraces: Allman
 AccessModifierOffset: -4
 ColumnLimit: 180
+AlignAfterOpenBracket: "DontAlign"
