@@ -93,6 +93,20 @@ set(SOURCE_2024
   ${SOURCE_DIR}2024/Day24.cpp
   ${SOURCE_DIR}2024/Day25.cpp
 )
+set(SOURCE_2025
+  ${SOURCE_DIR}2025/Day01.cpp
+  ${SOURCE_DIR}2025/Day02.cpp
+  ${SOURCE_DIR}2025/Day03.cpp
+  ${SOURCE_DIR}2025/Day04.cpp
+  ${SOURCE_DIR}2025/Day05.cpp
+  ${SOURCE_DIR}2025/Day06.cpp
+  ${SOURCE_DIR}2025/Day07.cpp
+  ${SOURCE_DIR}2025/Day08.cpp
+  ${SOURCE_DIR}2025/Day09.cpp
+  ${SOURCE_DIR}2025/Day10.cpp
+  ${SOURCE_DIR}2025/Day11.cpp
+  ${SOURCE_DIR}2025/Day12.cpp
+)
 
 # Set headers
 set(HEADER "${INCLUDE_DIR}AoCYears.hpp")
@@ -180,6 +194,21 @@ set(HEADER_2024
   ${INCLUDE_DIR}2024/Day24.hpp
   ${INCLUDE_DIR}2024/Day25.hpp
 )
+set(HEADER_2025
+  ${INCLUDE_DIR}2025/AoCYear2025.hpp
+  ${INCLUDE_DIR}2025/Day01.hpp
+  ${INCLUDE_DIR}2025/Day02.hpp
+  ${INCLUDE_DIR}2025/Day03.hpp
+  ${INCLUDE_DIR}2025/Day04.hpp
+  ${INCLUDE_DIR}2025/Day05.hpp
+  ${INCLUDE_DIR}2025/Day06.hpp
+  ${INCLUDE_DIR}2025/Day07.hpp
+  ${INCLUDE_DIR}2025/Day08.hpp
+  ${INCLUDE_DIR}2025/Day09.hpp
+  ${INCLUDE_DIR}2025/Day10.hpp
+  ${INCLUDE_DIR}2025/Day11.hpp
+  ${INCLUDE_DIR}2025/Day12.hpp
+)
 
 # Set libraries
 add_subdirectory("${LIBRARY_DIR}coll-aoc-runner")
@@ -193,6 +222,7 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADER}
   ${SOURCE_2015} ${HEADER_2015}
   ${SOURCE_2016} ${HEADER_2016}
   ${SOURCE_2024} ${HEADER_2024}
+  ${SOURCE_2025} ${HEADER_2025}
 )
 
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDE_DIR})

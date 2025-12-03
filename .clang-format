@@ -4,6 +4,7 @@ IndentWidth: 4
 TabWidth: 4
 NamespaceIndentation: All
 BreakBeforeBraces: Allman
+AllowShortBlocksOnASingleLine: Always
 AccessModifierOffset: -4
 ColumnLimit: 180
 AlignAfterOpenBracket: "DontAlign"

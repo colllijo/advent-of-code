@@ -2,7 +2,7 @@
 
 #include "AoCYears.hpp"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	auto runner = AoCRunner();
 
@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 	runner.addYear(2015, AoCYear_2015());
 	runner.addYear(2016, AoCYear_2016());
 	runner.addYear(2024, AoCYear_2024());
+	runner.addYear(2025, AoCYear_2025());
 
 	return runner.run(argc, argv);
 }
