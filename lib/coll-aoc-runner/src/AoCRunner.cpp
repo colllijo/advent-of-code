@@ -2,6 +2,7 @@
 
 #include <getopt.h>
 
+#include <chrono>
 #include <cstdlib>
 #include <cwchar>
 #include <filesystem>
@@ -15,7 +16,7 @@ AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance())
 	std::filesystem::path cacheDir;
 
 	// Check if a root directory is set else use `<PROJECT_ROOT>/input/`
-	char *root = getenv("CAOC_ROOT_DIR");
+	char* root = getenv("CAOC_ROOT_DIR");
 	if (root == nullptr)
 	{
 		// Assume the binary is in the build folder
@@ -35,17 +36,17 @@ AoCRunner::AoCRunner() : runExamples(true), aocIO(AoCIO::getInstance())
 }
 AoCRunner::~AoCRunner() = default;
 
-void AoCRunner::addYear(int year, const AoCYear &aocYear) { years[year] = aocYear; }
+void AoCRunner::addYear(int year, const AoCYear& aocYear) { years[year] = aocYear; }
 
-int AoCRunner::run(int argc, char *argv[])
+int AoCRunner::run(int argc, char* argv[])
 {
 	parseArgs(argc, argv);
 
-	for (const auto &[year, aocYear] : years)
+	for (const auto& [year, aocYear] : years)
 	{
 		if (selector.year != -1 && selector.year != year) continue;
 
-		for (auto &[day, aocDay] : aocYear.getDays())
+		for (auto& [day, aocDay] : aocYear.getDays())
 		{
 			if (selector.day != -1 && selector.day != day) continue;
 
@@ -54,9 +55,9 @@ int AoCRunner::run(int argc, char *argv[])
 				if (selector.part != 2) runPart(aocDay, year, day, 1, runExamples);
 				if (selector.part != 1) runPart(aocDay, year, day, 2, runExamples);
 			}
-			catch (const AoCException &e)
+			catch (const AoCException& e)
 			{
-        aocIO.printError(e.what());
+				aocIO.printError(e.what());
 			}
 		}
 	}
@@ -64,7 +65,7 @@ int AoCRunner::run(int argc, char *argv[])
 	return 0;
 }
 
-void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day, int part, bool example)
+void AoCRunner::runPart(const std::shared_ptr<AoCDay>& aocDay, int year, int day, int part, bool example)
 {
 	std::string result;
 	std::string input = aocInput->getInput(year, day);
@@ -74,18 +75,24 @@ void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day
 	std::string exampleInput = aocDay->getExampleInput();
 	bool exampleSolved = false;
 
-	if (example && !exampleInput.empty()) exampleResult = part == 1 ? aocDay->part1(exampleInput, true) : aocDay->part2(exampleInput, true);
-	result = part == 1 ? aocDay->part1(input) : aocDay->part2(input);
+	const auto t0 = std::chrono::high_resolution_clock::now();
+	if (example && !exampleInput.empty()) exampleResult = (part == 1 ? aocDay->part1(exampleInput, true) : aocDay->part2(exampleInput, true));
+	const auto t1 = std::chrono::high_resolution_clock::now();
+	result = (part == 1 ? aocDay->part1(input) : aocDay->part2(input));
+	const auto t2 = std::chrono::high_resolution_clock::now();
 
 	solved = !result.empty() && !result.starts_with("TODO");
 	exampleSolved = !exampleResult.empty() && !exampleResult.starts_with("TODO");
 
+	const std::chrono::high_resolution_clock::duration exampleDuration = t1 - t0;
+	const std::chrono::high_resolution_clock::duration duration = t2 - t1;
+
 	if (solved && exampleSolved)
-		aocIO.printFullPartResult(year, day, part, result, exampleResult);
+		aocIO.printFullPartResult(year, day, part, result, exampleResult, duration, exampleDuration);
 	else if (solved)
-		aocIO.printPartResult(year, day, part, result, false);
+		aocIO.printPartResult(year, day, part, result, duration, false);
 	else if (exampleSolved)
-		aocIO.printPartResult(year, day, part, exampleResult, true);
+		aocIO.printPartResult(year, day, part, exampleResult, exampleDuration, true);
 
 	if (!solved) return;
 
@@ -93,15 +100,10 @@ void AoCRunner::runPart(const std::shared_ptr<AoCDay> &aocDay, int year, int day
 	aocIO.printSolveState(state, cached);
 }
 
-void AoCRunner::parseArgs(int argc, char *argv[])
+void AoCRunner::parseArgs(int argc, char* argv[])
 {
-	const struct option longopts[] = {{"help", no_argument, nullptr, 'h'},
-	                                  {"version", no_argument, nullptr, 'v'},
-	                                  {"year", required_argument, nullptr, 'y'},
-	                                  {"day", required_argument, nullptr, 'd'},
-	                                  {"part", required_argument, nullptr, 'p'},
-	                                  {"no-example", no_argument, nullptr, 'x'},
-	                                  {nullptr, 0, nullptr, 0}};
+	const struct option longopts[] = {{"help", no_argument, nullptr, 'h'}, {"version", no_argument, nullptr, 'v'}, {"year", required_argument, nullptr, 'y'},
+	    {"day", required_argument, nullptr, 'd'}, {"part", required_argument, nullptr, 'p'}, {"no-example", no_argument, nullptr, 'x'}, {nullptr, 0, nullptr, 0}};
 
 	int opt;
 	while ((opt = getopt_long(argc, argv, "hvy:d:p:", longopts, nullptr)) != -1)
@@ -135,17 +137,17 @@ void AoCRunner::parseArgs(int argc, char *argv[])
 	validateAoCSelector();
 }
 
-int AoCRunner::parseArgToInt(const char *option, char *arg)
+int AoCRunner::parseArgToInt(const char* option, char* arg)
 {
 	try
 	{
 		return std::stoi(arg);
 	}
-	catch (std::invalid_argument &e)
+	catch (std::invalid_argument& e)
 	{
 		fprintf(stderr, "\033[91mError:\033[0m Invalid argument for option %s, (%s)\n", option, arg);
 	}
-	catch (std::out_of_range &e)
+	catch (std::out_of_range& e)
 	{
 		fprintf(stderr, "\033[91mError:\033[0m Argument out of range for option %s (%s)\n", option, arg);
 	}
