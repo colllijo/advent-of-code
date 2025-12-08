@@ -1,10 +1,24 @@
-BasedOnStyle: Google
-UseTab: ForIndentation
+BasedOnStyle: LLVM
+
+# Indentation
 IndentWidth: 4
 TabWidth: 4
+UseTab: Always
 NamespaceIndentation: All
-BreakBeforeBraces: Allman
-AllowShortBlocksOnASingleLine: Always
 AccessModifierOffset: -4
-ColumnLimit: 180
+ContinuationIndentWidth: 4
+IndentCaseLabels: false
+
+# Brackets
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortBlocksOnASingleLine: Always
+AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+
+# Alignment
+AlignConsecutiveAssignments: Consecutive
 AlignAfterOpenBracket: "DontAlign"
+
+# Line length
+ColumnLimit: 180
